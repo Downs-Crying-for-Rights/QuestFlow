@@ -1,0 +1,2502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智能题库工作流系统</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06080f;
+  --glass-bg:rgba(255,255,255,0.04);
+  --glass-bg-hover:rgba(255,255,255,0.08);
+  --glass-border:rgba(255,255,255,0.08);
+  --glass-border-hover:rgba(255,255,255,0.15);
+  --accent:#00d4aa;
+  --accent-dim:rgba(0,212,170,0.15);
+  --accent-glow:rgba(0,212,170,0.3);
+  --secondary:#7c6aef;
+  --secondary-dim:rgba(124,106,239,0.15);
+  --warn:#f59e0b;
+  --warn-dim:rgba(245,158,11,0.15);
+  --danger:#ef4444;
+  --danger-dim:rgba(239,68,68,0.15);
+  --info:#3b82f6;
+  --info-dim:rgba(59,130,246,0.15);
+  --text:#e8eaf0;
+  --text-secondary:#8b90a0;
+  --text-dim:#555a6e;
+  --sidebar-w:260px;
+  --radius:16px;
+  --radius-sm:10px;
+  --radius-xs:6px;
+}
+html{font-size:14px;scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans SC','PingFang SC',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 20%,rgba(0,212,170,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 80% at 90% 80%,rgba(124,106,239,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 50% 50%,rgba(59,130,246,0.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:0.5;pointer-events:none;
+}
+
+/* === SIDEBAR === */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);z-index:100;
+  background:rgba(10,12,22,0.7);
+  backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+  border-right:1px solid var(--glass-border);
+  display:flex;flex-direction:column;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+.sidebar-header{
+  padding:24px 20px 20px;
+  border-bottom:1px solid var(--glass-border);
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),var(--secondary));
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:800;color:#fff;
+  box-shadow:0 4px 20px var(--accent-glow);
+}
+.logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:1.15rem;letter-spacing:-0.02em}
+.logo-sub{font-size:.7rem;color:var(--text-dim);margin-top:2px;letter-spacing:0.05em}
+
+.nav{flex:1;overflow-y:auto;padding:12px 10px}
+.nav-group{margin-bottom:8px}
+.nav-label{
+  font-size:.65rem;font-weight:600;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:0.1em;
+  padding:12px 14px 6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:all .2s ease;
+  color:var(--text-secondary);font-size:.88rem;font-weight:500;
+  position:relative;overflow:hidden;
+}
+.nav-item:hover{background:var(--glass-bg-hover);color:var(--text)}
+.nav-item.active{
+  background:var(--accent-dim);color:var(--accent);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;
+  background:var(--accent);border-radius:0 3px 3px 0;
+}
+.nav-icon{font-size:1.15rem;width:24px;text-align:center;flex-shrink:0}
+.nav-badge{
+  margin-left:auto;font-size:.65rem;font-weight:600;
+  padding:2px 7px;border-radius:10px;
+  background:var(--danger-dim);color:var(--danger);
+}
+
+.sidebar-footer{
+  padding:16px;border-top:1px solid var(--glass-border);
+}
+.sidebar-footer .status-indicator{
+  display:flex;align-items:center;gap:8px;
+  font-size:.75rem;color:var(--text-dim);
+}
+.status-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 8px var(--accent-glow);
+  animation:pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot{
+  0%,100%{opacity:1}50%{opacity:.4}
+}
+
+/* === MAIN CONTENT === */
+.main{
+  margin-left:var(--sidebar-w);
+  min-height:100vh;
+  position:relative;z-index:1;
+}
+.topbar{
+  position:sticky;top:0;z-index:50;
+  padding:16px 32px;
+  background:rgba(6,8,15,0.6);
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border-bottom:1px solid var(--glass-border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.topbar-title{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:1.3rem;letter-spacing:-0.02em;
+}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+
+.content{padding:28px 32px 60px}
+
+/* === GLASS COMPONENTS === */
+.glass{
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius);
+  transition:all .25s ease;
+}
+.glass:hover{
+  border-color:var(--glass-border-hover);
+  background:var(--glass-bg-hover);
+}
+.glass-card{padding:24px}
+.glass-card-sm{padding:16px}
+.glass-header{
+  padding:20px 24px;
+  border-bottom:1px solid var(--glass-border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.glass-header h3{font-size:1rem;font-weight:600}
+
+/* === GRID LAYOUTS === */
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.grid-1-2{display:grid;grid-template-columns:1fr 2fr;gap:20px}
+.grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.flex-col{display:flex;flex-direction:column}
+.gap-12{gap:12px}
+.gap-16{gap:16px}
+.gap-20{gap:20px}
+.gap-24{gap:24px}
+
+/* === STAT CARDS === */
+.stat-card{
+  padding:20px 22px;
+  position:relative;overflow:hidden;
+}
+.stat-card .stat-icon{
+  width:42px;height:42px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;margin-bottom:14px;
+}
+.stat-card .stat-value{
+  font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;
+  letter-spacing:-0.03em;line-height:1;
+}
+.stat-card .stat-label{
+  font-size:.78rem;color:var(--text-secondary);margin-top:6px;
+}
+.stat-card .stat-change{
+  font-size:.7rem;margin-top:8px;display:flex;align-items:center;gap:4px;
+}
+.stat-card .stat-change.up{color:var(--accent)}
+.stat-card .stat-change.down{color:var(--danger)}
+.stat-card::after{
+  content:'';position:absolute;right:-20px;top:-20px;
+  width:100px;height:100px;border-radius:50%;
+  opacity:0.06;
+}
+.stat-card[data-color="accent"] .stat-icon{background:var(--accent-dim);color:var(--accent)}
+.stat-card[data-color="accent"]::after{background:var(--accent)}
+.stat-card[data-color="secondary"] .stat-icon{background:var(--secondary-dim);color:var(--secondary)}
+.stat-card[data-color="secondary"]::after{background:var(--secondary)}
+.stat-card[data-color="warn"] .stat-icon{background:var(--warn-dim);color:var(--warn)}
+.stat-card[data-color="warn"]::after{background:var(--warn)}
+.stat-card[data-color="info"] .stat-icon{background:var(--info-dim);color:var(--info)}
+.stat-card[data-color="info"]::after{background:var(--info)}
+
+/* === FORM ELEMENTS === */
+.form-group{margin-bottom:18px}
+.form-label{
+  display:block;font-size:.78rem;font-weight:600;
+  color:var(--text-secondary);margin-bottom:7px;
+  letter-spacing:0.02em;
+}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:10px 14px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius-xs);
+  color:var(--text);font-size:.88rem;
+  font-family:inherit;
+  transition:all .2s ease;
+  outline:none;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-dim);
+  background:rgba(255,255,255,0.05);
+}
+.form-input::placeholder{color:var(--text-dim)}
+.form-textarea{resize:vertical;min-height:100px;line-height:1.6}
+.form-select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b90a0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:32px;
+}
+.form-select option{background:#1a1c2e;color:var(--text)}
+.form-row{display:flex;gap:12px}
+.form-row .form-group{flex:1}
+.form-hint{font-size:.7rem;color:var(--text-dim);margin-top:4px}
+.checkbox-group{display:flex;flex-wrap:wrap;gap:8px}
+.checkbox-item{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:var(--radius-xs);
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--glass-border);
+  cursor:pointer;font-size:.82rem;
+  transition:all .2s ease;
+}
+.checkbox-item:hover{border-color:var(--glass-border-hover)}
+.checkbox-item input:checked+span{color:var(--accent)}
+.checkbox-item:has(input:checked){
+  border-color:var(--accent);background:var(--accent-dim);
+}
+.checkbox-item input{accent-color:var(--accent)}
+
+/* === BUTTONS === */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 20px;border:1px solid transparent;
+  border-radius:var(--radius-xs);font-size:.85rem;font-weight:600;
+  font-family:inherit;cursor:pointer;
+  transition:all .25s ease;white-space:nowrap;
+}
+.btn-primary{
+  background:var(--accent);color:#0a0f0d;
+  box-shadow:0 4px 20px var(--accent-glow);
+}
+.btn-primary:hover{
+  box-shadow:0 6px 30px var(--accent-glow);
+  transform:translateY(-1px);
+}
+.btn-secondary{
+  background:var(--glass-bg);border-color:var(--glass-border);color:var(--text);
+}
+.btn-secondary:hover{background:var(--glass-bg-hover);border-color:var(--glass-border-hover)}
+.btn-danger{background:var(--danger-dim);color:var(--danger);border-color:rgba(239,68,68,0.2)}
+.btn-danger:hover{background:rgba(239,68,68,0.2)}
+.btn-ghost{background:transparent;color:var(--text-secondary);padding:8px 12px}
+.btn-ghost:hover{color:var(--text);background:var(--glass-bg)}
+.btn-sm{padding:7px 14px;font-size:.78rem}
+.btn-icon{
+  width:36px;height:36px;padding:0;
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  border-radius:var(--radius-xs);color:var(--text-secondary);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:1rem;transition:all .2s ease;
+}
+.btn-icon:hover{background:var(--glass-bg-hover);color:var(--text)}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+
+/* === TABLE === */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-sm)}
+table{width:100%;border-collapse:collapse}
+thead th{
+  padding:12px 16px;text-align:left;
+  font-size:.72rem;font-weight:600;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:0.06em;
+  border-bottom:1px solid var(--glass-border);
+  background:rgba(255,255,255,0.02);
+  white-space:nowrap;
+}
+tbody td{
+  padding:12px 16px;font-size:.84rem;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+  color:var(--text-secondary);
+}
+tbody tr{transition:background .15s ease}
+tbody tr:hover{background:rgba(255,255,255,0.02)}
+tbody tr:last-child td{border-bottom:none}
+
+/* === TAGS / BADGES === */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:20px;
+  font-size:.7rem;font-weight:600;
+  letter-spacing:0.02em;
+}
+.tag-accent{background:var(--accent-dim);color:var(--accent)}
+.tag-secondary{background:var(--secondary-dim);color:var(--secondary)}
+.tag-warn{background:var(--warn-dim);color:var(--warn)}
+.tag-danger{background:var(--danger-dim);color:var(--danger)}
+.tag-info{background:var(--info-dim);color:var(--info)}
+.tag-default{background:rgba(255,255,255,0.06);color:var(--text-secondary)}
+
+.difficulty-easy{color:var(--accent)}
+.difficulty-medium{color:var(--warn)}
+.difficulty-hard{color:var(--danger)}
+
+/* === PROGRESS BAR === */
+.progress-bar{
+  width:100%;height:6px;border-radius:3px;
+  background:rgba(255,255,255,0.06);overflow:hidden;
+}
+.progress-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--accent),var(--secondary));
+  transition:width .5s ease;
+}
+
+/* === TABS === */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--glass-border);margin-bottom:20px}
+.tab{
+  padding:10px 18px;font-size:.84rem;font-weight:500;
+  color:var(--text-dim);cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:all .2s ease;
+}
+.tab:hover{color:var(--text-secondary)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* === MODAL === */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease;
+}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal{
+  width:90%;max-width:560px;max-height:80vh;overflow-y:auto;
+  background:rgba(16,18,30,0.9);
+  backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius);
+  transform:translateY(20px) scale(0.97);
+  transition:transform .3s ease;
+}
+.modal-overlay.show .modal{transform:translateY(0) scale(1)}
+.modal-header{
+  padding:20px 24px;border-bottom:1px solid var(--glass-border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-header h3{font-size:1.05rem;font-weight:600}
+.modal-body{padding:24px}
+.modal-footer{
+  padding:16px 24px;border-top:1px solid var(--glass-border);
+  display:flex;justify-content:flex-end;gap:10px;
+}
+
+/* === TOAST === */
+.toast-container{
+  position:fixed;top:20px;right:20px;z-index:2000;
+  display:flex;flex-direction:column;gap:10px;
+  pointer-events:none;
+}
+.toast{
+  padding:14px 20px;border-radius:var(--radius-sm);
+  background:rgba(16,18,30,0.9);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  font-size:.84rem;
+  display:flex;align-items:center;gap:10px;
+  pointer-events:auto;
+  animation:toast-in .35s ease forwards;
+  max-width:380px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.4);
+}
+.toast.removing{animation:toast-out .3s ease forwards}
+@keyframes toast-in{
+  from{opacity:0;transform:translateX(40px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@keyframes toast-out{
+  to{opacity:0;transform:translateX(40px)}
+}
+.toast-icon{font-size:1.1rem;flex-shrink:0}
+.toast-success .toast-icon{color:var(--accent)}
+.toast-error .toast-icon{color:var(--danger)}
+.toast-warning .toast-icon{color:var(--warn)}
+.toast-info .toast-icon{color:var(--info)}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.18)}
+
+/* === VIEW === */
+.view{display:none}
+.view.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* === QUESTION CARD === */
+.q-card{
+  padding:18px 20px;cursor:pointer;
+  border-left:3px solid transparent;
+}
+.q-card:hover{border-left-color:var(--accent)}
+.q-card .q-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.q-card .q-content{font-size:.88rem;line-height:1.7;color:var(--text)}
+.q-card .q-footer{
+  margin-top:10px;display:flex;align-items:center;
+  justify-content:space-between;
+}
+
+/* === WORKFLOW === */
+.workflow-step{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;
+}
+.workflow-step .step-num{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  flex-shrink:0;
+}
+.workflow-step.active .step-num{
+  background:var(--accent-dim);border-color:var(--accent);color:var(--accent);
+}
+.workflow-step.done .step-num{
+  background:var(--accent);border-color:var(--accent);color:#0a0f0d;
+}
+.workflow-step .step-info{flex:1}
+.workflow-step .step-title{font-weight:600;font-size:.88rem}
+.workflow-step .step-desc{font-size:.75rem;color:var(--text-dim);margin-top:2px}
+.workflow-step+.workflow-step{border-top:1px solid rgba(255,255,255,0.03)}
+
+/* === LOG ENTRY === */
+.log-entry{
+  padding:10px 16px;display:flex;gap:12px;
+  font-size:.78rem;font-family:'DM Mono','SF Mono',monospace;
+  border-bottom:1px solid rgba(255,255,255,0.02);
+}
+.log-time{color:var(--text-dim);white-space:nowrap;flex-shrink:0}
+.log-level{
+  font-weight:600;text-transform:uppercase;letter-spacing:0.04em;
+  white-space:nowrap;flex-shrink:0;min-width:50px;
+}
+.log-level.info{color:var(--info)}
+.log-level.success{color:var(--accent)}
+.log-level.warn{color:var(--warn)}
+.log-level.error{color:var(--danger)}
+.log-msg{color:var(--text-secondary);word-break:break-all}
+
+/* === EMPTY STATE === */
+.empty-state{
+  padding:60px 20px;text-align:center;
+  color:var(--text-dim);
+}
+.empty-state .empty-icon{font-size:2.5rem;margin-bottom:16px;opacity:0.4}
+.empty-state .empty-text{font-size:.9rem;margin-bottom:6px}
+.empty-state .empty-hint{font-size:.78rem;color:var(--text-dim)}
+
+/* === CHART === */
+.chart-container{position:relative;height:220px}
+
+/* === API CONFIG CARDS === */
+.api-card{
+  padding:18px 20px;
+  display:flex;align-items:center;gap:16px;
+}
+.api-card .api-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;flex-shrink:0;
+}
+.api-card .api-info{flex:1;min-width:0}
+.api-card .api-name{font-weight:600;font-size:.9rem}
+.api-card .api-meta{font-size:.75rem;color:var(--text-dim);margin-top:2px}
+.api-card .api-key{
+  font-family:'DM Mono',monospace;font-size:.72rem;
+  color:var(--text-dim);margin-top:4px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+/* === RESPONSIVE === */
+@media(max-width:1200px){
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .grid-4,.grid-3,.grid-2{grid-template-columns:1fr}
+  .grid-1-2,.grid-2-1{grid-template-columns:1fr}
+  .content{padding:16px}
+  .topbar{padding:12px 16px}
+  .mobile-toggle{display:flex !important}
+}
+.mobile-toggle{display:none !important}
+
+/* === RANGE SLIDER === */
+input[type="range"]{
+  -webkit-appearance:none;width:100%;height:4px;
+  background:rgba(255,255,255,0.08);border-radius:2px;outline:none;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--accent);cursor:pointer;
+  box-shadow:0 0 10px var(--accent-glow);
+}
+
+/* === TOGGLE === */
+.toggle{
+  position:relative;width:44px;height:24px;cursor:pointer;
+  background:rgba(255,255,255,0.08);border-radius:12px;
+  transition:background .25s ease;flex-shrink:0;
+}
+.toggle.on{background:var(--accent)}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:18px;height:18px;border-radius:50%;
+  background:#fff;transition:transform .25s ease;
+}
+.toggle.on::after{transform:translateX(20px)}
+
+/* === LOADING SPINNER === */
+.spinner{
+  width:20px;height:20px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.1);
+  border-top-color:var(--accent);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.section-title{
+  font-size:.72rem;font-weight:600;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:0.08em;
+  margin-bottom:14px;
+}
+
+/* question type badges inline */
+.q-type{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-size:.68rem;font-weight:600;letter-spacing:0.02em;
+}
+.q-type.choice{background:var(--info-dim);color:var(--info)}
+.q-type.judge{background:var(--accent-dim);color:var(--accent)}
+.q-type.fill{background:var(--secondary-dim);color:var(--secondary)}
+.q-type.essay{background:var(--warn-dim);color:var(--warn)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon">Q</div>
+      <div>
+        <div class="logo-text">QuestFlow</div>
+        <div class="logo-sub">智能题库工作流</div>
+      </div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-group">
+      <div class="nav-label">概览</div>
+      <div class="nav-item active" data-view="dashboard">
+        <span class="nav-icon">📊</span> 数据仪表盘
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">配置</div>
+      <div class="nav-item" data-view="api-config">
+        <span class="nav-icon">🔑</span> API 配置
+      </div>
+      <div class="nav-item" data-view="settings">
+        <span class="nav-icon">⚙️</span> 系统设置
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">工作流</div>
+      <div class="nav-item" data-view="generate">
+        <span class="nav-icon">✨</span> 题目生成
+      </div>
+      <div class="nav-item" data-view="answer">
+        <span class="nav-icon">🤖</span> 自动作答
+      </div>
+      <div class="nav-item" data-view="workflow">
+        <span class="nav-icon">🔄</span> 工作流控制
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">数据</div>
+      <div class="nav-item" data-view="questions">
+        <span class="nav-icon">📝</span> 题库管理
+      </div>
+      <div class="nav-item" data-view="wrong">
+        <span class="nav-icon">❌</span> 错题本
+        <span class="nav-badge" id="wrongCount">0</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">系统</div>
+      <div class="nav-item" data-view="logs">
+        <span class="nav-icon">📋</span> 操作日志
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="status-indicator">
+      <span class="status-dot"></span>
+      <span>系统就绪 · v1.0</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn-icon mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <div class="topbar-title" id="topbarTitle">数据仪表盘</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-sm btn-secondary" onclick="exportAllData()">📥 导出数据</button>
+      <button class="btn btn-sm btn-secondary" onclick="document.getElementById('importFile').click()">📤 导入数据</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importAllData(event)">
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ============ DASHBOARD ============ -->
+    <div class="view active" id="view-dashboard">
+      <div class="grid-4 gap-16" style="margin-bottom:24px">
+        <div class="glass stat-card glass-card-sm" data-color="accent">
+          <div class="stat-icon">📝</div>
+          <div class="stat-value" id="statTotalQ">0</div>
+          <div class="stat-label">题目总数</div>
+          <div class="stat-change up" id="statQChange"></div>
+        </div>
+        <div class="glass stat-card glass-card-sm" data-color="info">
+          <div class="stat-icon">🤖</div>
+          <div class="stat-value" id="statTotalA">0</div>
+          <div class="stat-label">作答总数</div>
+          <div class="stat-change up" id="statAChange"></div>
+        </div>
+        <div class="glass stat-card glass-card-sm" data-color="secondary">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="statAccuracy">0%</div>
+          <div class="stat-label">正确率</div>
+          <div class="stat-change" id="statAccChange"></div>
+        </div>
+        <div class="glass stat-card glass-card-sm" data-color="warn">
+          <div class="stat-icon">❌</div>
+          <div class="stat-value" id="statWrong">0</div>
+          <div class="stat-label">错题数</div>
+          <div class="stat-change down" id="statWrongChange"></div>
+        </div>
+      </div>
+
+      <div class="grid-2-1 gap-20">
+        <div class="glass glass-card">
+          <h3 style="font-size:.95rem;margin-bottom:16px">生成趋势 & 正确率</h3>
+          <div class="chart-container"><canvas id="trendChart"></canvas></div>
+        </div>
+        <div class="glass glass-card">
+          <h3 style="font-size:.95rem;margin-bottom:16px">题目类型分布</h3>
+          <div class="chart-container"><canvas id="typeChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="grid-2 gap-20" style="margin-top:20px">
+        <div class="glass glass-card">
+          <h3 style="font-size:.95rem;margin-bottom:16px">难度分布</h3>
+          <div class="chart-container"><canvas id="diffChart"></canvas></div>
+        </div>
+        <div class="glass glass-card">
+          <h3 style="font-size:.95rem;margin-bottom:16px">最近活动</h3>
+          <div id="recentActivity" style="max-height:220px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ API CONFIG ============ -->
+    <div class="view" id="view-api-config">
+      <div class="grid-2-1 gap-20">
+        <div>
+          <div class="glass glass-card" style="margin-bottom:20px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+              <h3 style="font-size:.95rem">已配置的 API</h3>
+              <button class="btn btn-sm btn-primary" onclick="showAddApiModal()">+ 添加 API</button>
+            </div>
+            <div id="apiList" class="flex-col gap-12"></div>
+            <div id="apiEmpty" class="empty-state">
+              <div class="empty-icon">🔑</div>
+              <div class="empty-text">尚未配置 API</div>
+              <div class="empty-hint">点击上方按钮添加 AI 模型 API</div>
+            </div>
+          </div>
+        </div>
+        <div class="glass glass-card">
+          <h3 style="font-size:.95rem;margin-bottom:16px">快速测试</h3>
+          <div class="form-group">
+            <label class="form-label">选择 API</label>
+            <select class="form-select" id="testApiSelect">
+              <option value="">请先添加 API</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">测试提示词</label>
+            <textarea class="form-textarea" id="testPrompt" rows="3" placeholder="输入测试内容...">你好，请简要介绍你自己。</textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="testApiConnection()">测试连接</button>
+          <div id="testResult" style="margin-top:16px;display:none">
+            <div class="section-title">响应结果</div>
+            <div style="padding:14px;background:rgba(0,0,0,0.3);border-radius:var(--radius-xs);font-size:.82rem;line-height:1.6;max-height:200px;overflow-y:auto" id="testResultContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SETTINGS ============ -->
+    <div class="view" id="view-settings">
+      <div class="grid-2 gap-20">
+        <div class="glass glass-card">
+          <h3 style="font-size:.95rem;margin-bottom:20px">生成设置</h3>
+          <div class="form-group">
+            <label class="form-label">默认生成 API (题目生成)</label>
+            <select class="form-select" id="settingGenApi"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">默认作答 API</label>
+            <select class="form-select" id="settingAnsApi"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">请求间隔 (毫秒)</label>
+            <input type="number" class="form-input" id="settingInterval" value="1000" min="200" max="30000">
+            <div class="form-hint">避免API频率限制，建议不低于500ms</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">单次最大生成数量</label>
+            <input type="number" class="form-input" id="settingMaxBatch" value="20" min="1" max="100">
+          </div>
+          <div class="form-group">
+            <label class="form-label">自动保存间隔 (秒)</label>
+            <input type="number" class="form-input" id="settingAutoSave" value="30" min="5" max="300">
+          </div>
+          <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
+        </div>
+        <div class="glass glass-card">
+          <h3 style="font-size:.95rem;margin-bottom:20px">答案判断设置</h3>
+          <div class="form-group">
+            <label class="form-label">判断模式</label>
+            <select class="form-select" id="settingJudgeMode">
+              <option value="ai">AI 自动判断</option>
+              <option value="exact">精确匹配</option>
+              <option value="contains">包含关键词</option>
+              <option value="manual">人工判断</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">AI 判断温度 (Temperature)</label>
+            <input type="range" id="settingJudgeTemp" min="0" max="1" step="0.05" value="0.1">
+            <div class="form-hint" id="settingJudgeTempVal">当前值: 0.1</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">判断通过阈值 (%)</label>
+            <input type="number" class="form-input" id="settingPassThreshold" value="60" min="0" max="100">
+            <div class="form-hint">AI判断置信度达到此阈值视为正确</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">判断提示词模板</label>
+            <textarea class="form-textarea" id="settingJudgePrompt" rows="5">请判断以下答案是否正确。题目：{question}，参考答案：{reference}，学生答案：{answer}。请回答"正确"或"不正确"，并简要说明理由。</textarea>
+          </div>
+          <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
+        </div>
+      </div>
+      <div class="glass glass-card" style="margin-top:20px">
+        <h3 style="font-size:.95rem;margin-bottom:20px">数据管理</h3>
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="exportAllData()">📥 导出全部数据</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 导入数据</button>
+          <button class="btn btn-danger" onclick="clearAllData()">🗑️ 清空所有数据</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ GENERATE ============ -->
+    <div class="view" id="view-generate">
+      <div class="grid-2-1 gap-20">
+        <div class="flex-col gap-20">
+          <div class="glass glass-card">
+            <h3 style="font-size:.95rem;margin-bottom:20px">题目生成配置</h3>
+            <div class="form-group">
+              <label class="form-label">使用 API</label>
+              <select class="form-select" id="genApi"></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">题目主题 / 知识领域</label>
+              <input type="text" class="form-input" id="genTopic" placeholder="例：JavaScript 基础、高中物理力学、Python 数据结构...">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">题目数量</label>
+                <input type="number" class="form-input" id="genCount" value="5" min="1" max="50">
+              </div>
+              <div class="form-group">
+                <label class="form-label">难度级别</label>
+                <select class="form-select" id="genDifficulty">
+                  <option value="mixed">混合</option>
+                  <option value="easy">简单</option>
+                  <option value="medium">中等</option>
+                  <option value="hard">困难</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">题目类型</label>
+              <div class="checkbox-group">
+                <label class="checkbox-item"><input type="checkbox" value="choice" checked><span>选择题</span></label>
+                <label class="checkbox-item"><input type="checkbox" value="judge" checked><span>判断题</span></label>
+                <label class="checkbox-item"><input type="checkbox" value="fill" checked><span>填空题</span></label>
+                <label class="checkbox-item"><input type="checkbox" value="essay"><span>简答题</span></label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">生成模板</label>
+              <select class="form-select" id="genTemplate" onchange="applyTemplate()">
+                <option value="custom">自定义要求</option>
+                <option value="exam">考试真题风格</option>
+                <option value="practice">练习题风格</option>
+                <option value="interview">面试题风格</option>
+                <option value="competition">竞赛题风格</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">补充要求</label>
+              <textarea class="form-textarea" id="genPrompt" rows="4" placeholder="描述题目的具体要求，如知识点范围、风格偏好等..."></textarea>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="startGeneration()" id="genBtn">
+              ✨ 开始生成
+            </button>
+          </div>
+          <div class="glass glass-card" id="genProgressCard" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <h3 style="font-size:.95rem">生成进度</h3>
+              <span id="genProgressText" style="font-size:.8rem;color:var(--text-secondary)">0/0</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="genProgressBar" style="width:0%"></div></div>
+            <div id="genProgressDetail" style="margin-top:12px;font-size:.78rem;color:var(--text-dim)"></div>
+          </div>
+        </div>
+        <div>
+          <div class="glass glass-card">
+            <h3 style="font-size:.95rem;margin-bottom:16px">生成预览</h3>
+            <div id="genPreview" class="flex-col gap-12" style="max-height:600px;overflow-y:auto">
+              <div class="empty-state">
+                <div class="empty-icon">✨</div>
+                <div class="empty-text">等待生成</div>
+                <div class="empty-hint">配置参数后点击开始生成</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ ANSWER ============ -->
+    <div class="view" id="view-answer">
+      <div class="grid-2-1 gap-20">
+        <div class="flex-col gap-20">
+          <div class="glass glass-card">
+            <h3 style="font-size:.95rem;margin-bottom:20px">自动作答配置</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">作答 API</label>
+                <select class="form-select" id="ansApi"></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">作答策略</label>
+                <select class="form-select" id="ansStrategy">
+                  <option value="direct">直接回答</option>
+                  <option value="cot">思维链推理</option>
+                  <option value="careful">审慎回答</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">待作答题目范围</label>
+              <select class="form-select" id="ansScope">
+                <option value="unanswered">所有未作答题</option>
+                <option value="recent">最近生成的题目</option>
+                <option value="wrong-review">错题重做</option>
+                <option value="all">全部题目 (重新作答)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">答题温度 (Temperature)</label>
+              <input type="range" id="ansTemp" min="0" max="1" step="0.05" value="0.3">
+              <div class="form-hint" id="ansTempVal">当前值: 0.3</div>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="startAnswering()" id="ansBtn">
+              🤖 开始作答
+            </button>
+          </div>
+          <div class="glass glass-card" id="ansProgressCard" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <h3 style="font-size:.95rem">作答进度</h3>
+              <span id="ansProgressText" style="font-size:.8rem;color:var(--text-secondary)">0/0</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="ansProgressBar" style="width:0%"></div></div>
+            <div style="display:flex;justify-content:space-between;margin-top:8px">
+              <span style="font-size:.75rem;color:var(--accent)" id="ansCorrectCount">✓ 0 正确</span>
+              <span style="font-size:.75rem;color:var(--danger)" id="ansWrongCount">✗ 0 错误</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="glass glass-card">
+            <h3 style="font-size:.95rem;margin-bottom:16px">作答结果</h3>
+            <div id="ansResults" class="flex-col gap-12" style="max-height:600px;overflow-y:auto">
+              <div class="empty-state">
+                <div class="empty-icon">🤖</div>
+                <div class="empty-text">等待作答</div>
+                <div class="empty-hint">配置后点击开始作答</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ WORKFLOW ============ -->
+    <div class="view" id="view-workflow">
+      <div class="grid-2 gap-20">
+        <div class="glass glass-card">
+          <h3 style="font-size:.95rem;margin-bottom:20px">一键工作流</h3>
+          <p style="font-size:.84rem;color:var(--text-secondary);line-height:1.7;margin-bottom:20px">
+            自动化执行完整工作流：配置参数 → 批量生成题目 → AI 自动作答 → 判定正误 → 错题归档。全程无需手动干预。
+          </p>
+          <div class="glass glass-card-sm" style="margin-bottom:16px">
+            <div class="workflow-step" id="wfStep1">
+              <div class="step-num">1</div>
+              <div class="step-info">
+                <div class="step-title">配置参数</div>
+                <div class="step-desc">设置题目主题、数量、难度等</div>
+              </div>
+            </div>
+            <div class="workflow-step" id="wfStep2">
+              <div class="step-num">2</div>
+              <div class="step-info">
+                <div class="step-title">批量生成</div>
+                <div class="step-desc">AI 生成题目并存储</div>
+              </div>
+            </div>
+            <div class="workflow-step" id="wfStep3">
+              <div class="step-num">3</div>
+              <div class="step-info">
+                <div class="step-title">自动作答</div>
+                <div class="step-desc">第二个 AI 模型自动答题</div>
+              </div>
+            </div>
+            <div class="workflow-step" id="wfStep4">
+              <div class="step-num">4</div>
+              <div class="step-info">
+                <div class="step-title">判定与归档</div>
+                <div class="step-desc">判分、错题入库、生成报告</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">运行模式</label>
+            <div style="display:flex;gap:10px">
+              <label class="checkbox-item" style="flex:1;justify-content:center">
+                <input type="radio" name="wfMode" value="auto" checked><span>全自动</span>
+              </label>
+              <label class="checkbox-item" style="flex:1;justify-content:center">
+                <input type="radio" name="wfMode" value="manual"><span>手动确认每步</span>
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="runWorkflow()" id="wfBtn">
+            🔄 启动工作流
+          </button>
+          <button class="btn btn-danger" style="width:100%;margin-top:8px;display:none" onclick="stopWorkflow()" id="wfStopBtn">
+            ⏹ 停止工作流
+          </button>
+        </div>
+        <div class="glass glass-card">
+          <h3 style="font-size:.95rem;margin-bottom:16px">工作流进度</h3>
+          <div id="wfLog" style="max-height:500px;overflow-y:auto">
+            <div class="empty-state">
+              <div class="empty-icon">🔄</div>
+              <div class="empty-text">尚未启动</div>
+              <div class="empty-hint">点击左侧按钮启动工作流</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ QUESTIONS ============ -->
+    <div class="view" id="view-questions">
+      <div class="glass glass-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+          <h3 style="font-size:.95rem">题库管理</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input type="text" class="form-input" id="qSearch" placeholder="搜索题目..." style="width:200px" oninput="renderQuestions()">
+            <select class="form-select" id="qFilterType" style="width:120px" onchange="renderQuestions()">
+              <option value="">全部类型</option>
+              <option value="choice">选择题</option>
+              <option value="judge">判断题</option>
+              <option value="fill">填空题</option>
+              <option value="essay">简答题</option>
+            </select>
+            <select class="form-select" id="qFilterDiff" style="width:120px" onchange="renderQuestions()">
+              <option value="">全部难度</option>
+              <option value="easy">简单</option>
+              <option value="medium">中等</option>
+              <option value="hard">困难</option>
+            </select>
+            <button class="btn btn-sm btn-secondary" onclick="exportQuestions()">📥 导出题目</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:40px">#</th>
+                <th>题目内容</th>
+                <th style="width:80px">类型</th>
+                <th style="width:70px">难度</th>
+                <th style="width:70px">状态</th>
+                <th style="width:100px">操作</th>
+              </tr>
+            </thead>
+            <tbody id="questionsTable"></tbody>
+          </table>
+        </div>
+        <div id="questionsEmpty" class="empty-state">
+          <div class="empty-icon">📝</div>
+          <div class="empty-text">暂无题目</div>
+          <div class="empty-hint">前往"题目生成"创建题目</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ WRONG QUESTIONS ============ -->
+    <div class="view" id="view-wrong">
+      <div class="glass glass-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+          <h3 style="font-size:.95rem">错题本</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input type="text" class="form-input" id="wSearch" placeholder="搜索错题..." style="width:200px" oninput="renderWrongQuestions()">
+            <select class="form-select" id="wFilterType" style="width:120px" onchange="renderWrongQuestions()">
+              <option value="">全部类型</option>
+              <option value="choice">选择题</option>
+              <option value="judge">判断题</option>
+              <option value="fill">填空题</option>
+              <option value="essay">简答题</option>
+            </select>
+            <select class="form-select" id="wFilterTag" style="width:120px" onchange="renderWrongQuestions()">
+              <option value="">全部标签</option>
+            </select>
+            <button class="btn btn-sm btn-secondary" onclick="exportWrongQuestions()">📥 导出错题</button>
+            <button class="btn btn-sm btn-primary" onclick="retryWrongQuestions()">🔄 错题重做</button>
+          </div>
+        </div>
+        <div id="wrongList" class="flex-col gap-12"></div>
+        <div id="wrongEmpty" class="empty-state">
+          <div class="empty-icon">🎉</div>
+          <div class="empty-text">暂无错题</div>
+          <div class="empty-hint">当前所有题目回答正确！</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ LOGS ============ -->
+    <div class="view" id="view-logs">
+      <div class="glass glass-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h3 style="font-size:.95rem">操作日志</h3>
+          <div style="display:flex;gap:8px">
+            <select class="form-select" id="logFilter" style="width:100px" onchange="renderLogs()">
+              <option value="">全部</option>
+              <option value="info">信息</option>
+              <option value="success">成功</option>
+              <option value="warn">警告</option>
+              <option value="error">错误</option>
+            </select>
+            <button class="btn btn-sm btn-ghost" onclick="clearLogs()">清空日志</button>
+          </div>
+        </div>
+        <div id="logList" style="max-height:600px;overflow-y:auto;font-family:'DM Mono',monospace"></div>
+        <div id="logEmpty" class="empty-state">
+          <div class="empty-icon">📋</div>
+          <div class="empty-text">暂无日志</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL: Add API -->
+<div class="modal-overlay" id="apiModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="apiModalTitle">添加 API 配置</h3>
+      <button class="btn-icon" onclick="closeModal('apiModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">服务提供商</label>
+        <select class="form-select" id="apiProvider" onchange="updateApiProvider()">
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic (Claude)</option>
+          <option value="deepseek">DeepSeek</option>
+          <option value="qwen">通义千问 (Qwen)</option>
+          <option value="zhipu">智谱 (GLM)</option>
+          <option value="moonshot">Moonshot (Kimi)</option>
+          <option value="custom">自定义</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">配置名称</label>
+        <input type="text" class="form-input" id="apiName" placeholder="例：GPT-4o 工作配置">
+      </div>
+      <div class="form-group">
+        <label class="form-label">API Key</label>
+        <input type="password" class="form-input" id="apiKey" placeholder="sk-...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Base URL</label>
+        <input type="text" class="form-input" id="apiBaseUrl" placeholder="https://api.openai.com/v1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">模型名称</label>
+        <input type="text" class="form-input" id="apiModel" placeholder="gpt-4o">
+      </div>
+      <input type="hidden" id="apiEditId" value="">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('apiModal')">取消</button>
+      <button class="btn btn-primary" onclick="saveApiConfig()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Question Detail -->
+<div class="modal-overlay" id="qDetailModal">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <h3>题目详情</h3>
+      <button class="btn-icon" onclick="closeModal('qDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="qDetailContent"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('qDetailModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// =============================
+// STATE MANAGEMENT
+// =============================
+const DEFAULT_STATE = {
+  apiConfigs: [],
+  questions: [],
+  answers: [],
+  wrongQuestions: [],
+  logs: [],
+  settings: {
+    genApiId: '',
+    ansApiId: '',
+    interval: 1000,
+    maxBatch: 20,
+    autoSave: 30,
+    judgeMode: 'ai',
+    judgeTemp: 0.1,
+    passThreshold: 60,
+    judgePrompt: '请判断以下答案是否正确。题目：{question}，参考答案：{reference}，学生答案：{answer}。请回答"正确"或"不正确"，并简要说明理由。'
+  },
+  stats: {
+    totalGenerated: 0,
+    totalAnswered: 0,
+    totalCorrect: 0,
+    totalWrong: 0,
+    history: []
+  }
+};
+
+let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+let workflowRunning = false;
+let workflowAbort = false;
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('questflow_state');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state = { ...JSON.parse(JSON.stringify(DEFAULT_STATE)), ...parsed };
+    }
+  } catch(e) { console.error('Failed to load state:', e); }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('questflow_state', JSON.stringify(state));
+  } catch(e) { console.error('Failed to save state:', e); }
+}
+
+// =============================
+// LOGGING
+// =============================
+function addLog(level, message, module = '系统') {
+  const entry = {
+    id: Date.now() + Math.random(),
+    timestamp: new Date().toISOString(),
+    level,
+    message,
+    module
+  };
+  state.logs.unshift(entry);
+  if (state.logs.length > 500) state.logs = state.logs.slice(0, 500);
+  renderLogs();
+}
+
+// =============================
+// TOAST
+// =============================
+function showToast(message, type = 'info') {
+  const icons = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `<span class="toast-icon">${icons[type]}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('removing');
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+// =============================
+// NAVIGATION
+// =============================
+const viewTitles = {
+  'dashboard': '数据仪表盘',
+  'api-config': 'API 配置',
+  'settings': '系统设置',
+  'generate': '题目生成',
+  'answer': '自动作答',
+  'workflow': '工作流控制',
+  'questions': '题库管理',
+  'wrong': '错题本',
+  'logs': '操作日志'
+};
+
+document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+  item.addEventListener('click', () => {
+    const view = item.dataset.view;
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + view).classList.add('active');
+    document.getElementById('topbarTitle').textContent = viewTitles[view] || '';
+    document.getElementById('sidebar').classList.remove('open');
+    if (view === 'dashboard') refreshDashboard();
+    if (view === 'api-config') refreshApiSelects();
+    if (view === 'settings') refreshSettings();
+    if (view === 'generate') refreshGenApiSelect();
+    if (view === 'answer') refreshAnsApiSelect();
+    if (view === 'questions') renderQuestions();
+    if (view === 'wrong') renderWrongQuestions();
+    if (view === 'logs') renderLogs();
+  });
+});
+
+// =============================
+// MODAL
+// =============================
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// =============================
+// API PROVIDERS
+// =============================
+const PROVIDERS = {
+  openai:     { name:'OpenAI',     baseUrl:'https://api.openai.com/v1',       model:'gpt-4o',           icon:'🟢' },
+  anthropic:  { name:'Anthropic',  baseUrl:'https://api.anthropic.com/v1',     model:'claude-sonnet-4-20250514',     icon:'🟤' },
+  deepseek:   { name:'DeepSeek',   baseUrl:'https://api.deepseek.com/v1',     model:'deepseek-chat',    icon:'🔵' },
+  qwen:       { name:'通义千问',    baseUrl:'https://dashscope.aliyuncs.com/compatible-mode/v1', model:'qwen-plus', icon:'🟣' },
+  zhipu:      { name:'智谱GLM',     baseUrl:'https://open.bigmodel.cn/api/paas/v4', model:'glm-4-flash', icon:'🔴' },
+  moonshot:   { name:'Moonshot',   baseUrl:'https://api.moonshot.cn/v1',       model:'moonshot-v1-8k',   icon:'🌙' },
+  custom:     { name:'自定义',     baseUrl:'',                                 model:'',                 icon:'🔧' }
+};
+
+function updateApiProvider() {
+  const p = PROVIDERS[document.getElementById('apiProvider').value];
+  document.getElementById('apiBaseUrl').value = p.baseUrl;
+  document.getElementById('apiModel').value = p.model;
+}
+
+function showAddApiModal() {
+  document.getElementById('apiModalTitle').textContent = '添加 API 配置';
+  document.getElementById('apiEditId').value = '';
+  document.getElementById('apiProvider').value = 'openai';
+  document.getElementById('apiName').value = '';
+  document.getElementById('apiKey').value = '';
+  updateApiProvider();
+  openModal('apiModal');
+}
+
+function editApi(id) {
+  const cfg = state.apiConfigs.find(c => c.id === id);
+  if (!cfg) return;
+  document.getElementById('apiModalTitle').textContent = '编辑 API 配置';
+  document.getElementById('apiEditId').value = id;
+  document.getElementById('apiProvider').value = cfg.provider;
+  document.getElementById('apiName').value = cfg.name;
+  document.getElementById('apiKey').value = cfg.apiKey;
+  document.getElementById('apiBaseUrl').value = cfg.baseUrl;
+  document.getElementById('apiModel').value = cfg.model;
+  openModal('apiModal');
+}
+
+function saveApiConfig() {
+  const editId = document.getElementById('apiEditId').value;
+  const cfg = {
+    id: editId || ('api_' + Date.now()),
+    provider: document.getElementById('apiProvider').value,
+    name: document.getElementById('apiName').value || '未命名配置',
+    apiKey: document.getElementById('apiKey').value,
+    baseUrl: document.getElementById('apiBaseUrl').value,
+    model: document.getElementById('apiModel').value
+  };
+  if (!cfg.apiKey) { showToast('请输入 API Key', 'error'); return; }
+
+  if (editId) {
+    const idx = state.apiConfigs.findIndex(c => c.id === editId);
+    if (idx >= 0) state.apiConfigs[idx] = cfg;
+  } else {
+    state.apiConfigs.push(cfg);
+  }
+  saveState();
+  closeModal('apiModal');
+  renderApiConfigs();
+  addLog('success', `API 配置已${editId ? '更新' : '添加'}: ${cfg.name}`);
+  showToast(`API 配置已${editId ? '更新' : '添加'}`, 'success');
+}
+
+function deleteApi(id) {
+  if (!confirm('确定删除此 API 配置？')) return;
+  state.apiConfigs = state.apiConfigs.filter(c => c.id !== id);
+  saveState();
+  renderApiConfigs();
+  addLog('info', 'API 配置已删除');
+  showToast('API 配置已删除', 'info');
+}
+
+function renderApiConfigs() {
+  const list = document.getElementById('apiList');
+  const empty = document.getElementById('apiEmpty');
+  if (state.apiConfigs.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  list.innerHTML = state.apiConfigs.map(cfg => {
+    const p = PROVIDERS[cfg.provider] || PROVIDERS.custom;
+    const maskedKey = cfg.apiKey.slice(0, 8) + '••••••' + cfg.apiKey.slice(-4);
+    return `
+      <div class="glass api-card">
+        <div class="api-icon" style="background:rgba(255,255,255,0.06)">${p.icon}</div>
+        <div class="api-info">
+          <div class="api-name">${escapeHtml(cfg.name)}</div>
+          <div class="api-meta">${p.name} · ${escapeHtml(cfg.model)}</div>
+          <div class="api-key">${maskedKey}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-icon" onclick="editApi('${cfg.id}')" title="编辑">✏️</button>
+          <button class="btn-icon" onclick="deleteApi('${cfg.id}')" title="删除">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  refreshApiSelects();
+}
+
+function refreshApiSelects() {
+  refreshGenApiSelect();
+  refreshAnsApiSelect();
+  const testSel = document.getElementById('testApiSelect');
+  testSel.innerHTML = state.apiConfigs.length === 0
+    ? '<option value="">请先添加 API</option>'
+    : state.apiConfigs.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${c.model})</option>`).join('');
+}
+
+function refreshGenApiSelect() {
+  const sel = document.getElementById('genApi');
+  sel.innerHTML = state.apiConfigs.length === 0
+    ? '<option value="">请先添加 API</option>'
+    : state.apiConfigs.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${c.model})</option>`).join('');
+  if (state.settings.genApiId) sel.value = state.settings.genApiId;
+}
+
+function refreshAnsApiSelect() {
+  const sel = document.getElementById('ansApi');
+  sel.innerHTML = state.apiConfigs.length === 0
+    ? '<option value="">请先添加 API</option>'
+    : state.apiConfigs.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${c.model})</option>`).join('');
+  if (state.settings.ansApiId) sel.value = state.settings.ansApiId;
+}
+
+// =============================
+// API CALL
+// =============================
+async function callAI(apiId, messages, temperature = 0.7) {
+  const cfg = state.apiConfigs.find(c => c.id === apiId);
+  if (!cfg) throw new Error('API 配置不存在');
+
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+
+  let body;
+  let url = cfg.baseUrl.replace(/\/+$/, '');
+
+  if (cfg.provider === 'anthropic') {
+    headers['x-api-key'] = cfg.apiKey;
+    headers['anthropic-version'] = '2023-06-01';
+    headers['anthropic-dangerous-direct-browser-access'] = 'true';
+    url += '/messages';
+    body = {
+      model: cfg.model,
+      max_tokens: 4096,
+      temperature,
+      messages: messages.map(m => ({ role: m.role === 'system' ? 'user' : m.role, content: m.content }))
+    };
+  } else {
+    headers['Authorization'] = `Bearer ${cfg.apiKey}`;
+    url += '/chat/completions';
+    body = {
+      model: cfg.model,
+      messages,
+      temperature,
+      max_tokens: 4096
+    };
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`API 错误 (${response.status}): ${errText.slice(0, 200)}`);
+  }
+
+  const data = await response.json();
+
+  if (cfg.provider === 'anthropic') {
+    return data.content?.[0]?.text || '';
+  }
+  return data.choices?.[0]?.message?.content || '';
+}
+
+// =============================
+// TEST API
+// =============================
+async function testApiConnection() {
+  const apiId = document.getElementById('testApiSelect').value;
+  if (!apiId) { showToast('请选择 API', 'warning'); return; }
+  const prompt = document.getElementById('testPrompt').value;
+  const resultDiv = document.getElementById('testResult');
+  const resultContent = document.getElementById('testResultContent');
+
+  resultDiv.style.display = '';
+  resultContent.innerHTML = '<div style="display:flex;align-items:center;gap:8px"><div class="spinner"></div> 正在测试...</div>';
+
+  try {
+    const reply = await callAI(apiId, [{ role: 'user', content: prompt }], 0.3);
+    resultContent.innerHTML = `<div style="color:var(--accent);margin-bottom:8px;font-weight:600">✓ 连接成功</div><div>${escapeHtml(reply)}</div>`;
+    addLog('success', 'API 连接测试成功');
+  } catch(e) {
+    resultContent.innerHTML = `<div style="color:var(--danger);margin-bottom:8px;font-weight:600">✕ 连接失败</div><div>${escapeHtml(e.message)}</div>`;
+    addLog('error', `API 测试失败: ${e.message}`);
+  }
+}
+
+// =============================
+// TEMPLATES
+// =============================
+const TEMPLATES = {
+  custom: '',
+  exam: '请生成符合正式考试标准的题目。要求：题目表述严谨规范，选项设置合理且具有干扰性，答案准确无歧义。难度应符合真实考试水平。',
+  practice: '请生成适合日常练习的题目。要求：注重基础知识的巩固，难度适中，每道题附带简要解析，帮助理解知识点。',
+  interview: '请生成适合技术面试的题目。要求：注重实际应用能力考察，结合真实工作场景，答案应体现最佳实践和深入理解。',
+  competition: '请生成具有一定挑战性的竞赛题目。要求：考察综合分析和创新能力，需要跨知识点思考，难度较高。'
+};
+
+function applyTemplate() {
+  const tpl = document.getElementById('genTemplate').value;
+  document.getElementById('genPrompt').value = TEMPLATES[tpl] || '';
+}
+
+// =============================
+// QUESTION GENERATION
+// =============================
+async function startGeneration() {
+  const apiId = document.getElementById('genApi').value;
+  if (!apiId) { showToast('请先配置并选择 API', 'error'); return; }
+  const topic = document.getElementById('genTopic').value.trim();
+  if (!topic) { showToast('请输入题目主题', 'warning'); return; }
+
+  const count = parseInt(document.getElementById('genCount').value) || 5;
+  const difficulty = document.getElementById('genDifficulty').value;
+  const types = [...document.querySelectorAll('#view-generate .checkbox-group input:checked')].map(c => c.value);
+  if (types.length === 0) { showToast('请至少选择一种题目类型', 'warning'); return; }
+  const extra = document.getElementById('genPrompt').value.trim();
+
+  const typeNames = { choice:'选择题', judge:'判断题', fill:'填空题', essay:'简答题' };
+  const typeList = types.map(t => typeNames[t]).join('、');
+  const diffNames = { mixed:'混合', easy:'简单', medium:'中等', hard:'困难' };
+
+  const systemPrompt = `你是一个专业的题目生成专家。请严格按照JSON格式生成题目，不要输出任何其他内容。
+
+生成要求：
+- 主题/领域：${topic}
+- 数量：${count}道
+- 题目类型：${typeList}
+- 难度：${diffNames[difficulty]}
+${extra ? '- 补充要求：' + extra : ''}
+
+每道题的JSON格式如下（注意根据题目类型适配）：
+- choice类型：{"type":"choice","content":"题目内容","options":["A.选项1","B.选项2","C.选项3","D.选项4"],"answer":"A","explanation":"解析","difficulty":"easy/medium/hard"}
+- judge类型：{"type":"judge","content":"题目内容","options":["正确","错误"],"answer":"正确","explanation":"解析","difficulty":"easy/medium/hard"}
+- fill类型：{"type":"fill","content":"题目内容（___为填空位置）","answer":"填空答案","explanation":"解析","difficulty":"easy/medium/hard"}
+- essay类型：{"type":"essay","content":"题目内容","answer":"参考答案","explanation":"解析","difficulty":"easy/medium/hard"}
+
+请返回一个JSON数组，包含${count}道题。仅返回JSON数组，不要添加任何markdown标记或额外文字。`;
+
+  const btn = document.getElementById('genBtn');
+  const progressCard = document.getElementById('genProgressCard');
+  const progressBar = document.getElementById('genProgressBar');
+  const progressText = document.getElementById('genProgressText');
+  const progressDetail = document.getElementById('genProgressDetail');
+  const preview = document.getElementById('genPreview');
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> 生成中...';
+  progressCard.style.display = '';
+  progressBar.style.width = '0%';
+  progressText.textContent = `0/${count}`;
+  preview.innerHTML = '';
+  addLog('info', `开始生成 ${count} 道题目 (主题: ${topic})`);
+
+  try {
+    progressDetail.textContent = '正在调用 AI 生成题目...';
+    progressBar.style.width = '30%';
+
+    const response = await callAI(apiId, [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: `请生成关于"${topic}"的 ${count} 道题目。` }
+    ], 0.7);
+
+    progressBar.style.width = '70%';
+    progressDetail.textContent = '正在解析题目数据...';
+
+    let questions;
+    try {
+      const jsonMatch = response.match(/$$[\s\S]*$$/);
+      if (!jsonMatch) throw new Error('未能从AI响应中提取JSON');
+      questions = JSON.parse(jsonMatch[0]);
+    } catch(e) {
+      throw new Error('解析AI响应失败: ' + e.message + '\n原始响应: ' + response.slice(0, 300));
+    }
+
+    const newQuestions = questions.map((q, i) => ({
+      id: 'q_' + Date.now() + '_' + i,
+      content: q.content || '',
+      type: q.type || 'choice',
+      difficulty: q.difficulty || difficulty === 'mixed' ? (['easy','medium','hard'][Math.floor(Math.random()*3)]) : difficulty,
+      options: q.options || [],
+      answer: q.answer || '',
+      explanation: q.explanation || '',
+      topic,
+      generatedAt: new Date().toISOString(),
+      source: 'ai_generate'
+    }));
+
+    state.questions.push(...newQuestions);
+    state.stats.totalGenerated += newQuestions.length;
+
+    progressBar.style.width = '100%';
+    progressText.textContent = `${newQuestions.length}/${count}`;
+    progressDetail.textContent = `成功生成 ${newQuestions.length} 道题目`;
+
+    preview.innerHTML = newQuestions.map((q, i) => renderQuestionCard(q, i + 1)).join('');
+
+    addLog('success', `成功生成 ${newQuestions.length} 道题目`);
+    showToast(`成功生成 ${newQuestions.length} 道题目`, 'success');
+    recordHistory('generate', newQuestions.length);
+    saveState();
+  } catch(e) {
+    progressDetail.textContent = '生成失败: ' + e.message;
+    progressBar.style.width = '100%';
+    progressBar.style.background = 'var(--danger)';
+    addLog('error', `生成失败: ${e.message}`);
+    showToast('生成失败: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✨ 开始生成';
+    setTimeout(() => { progressBar.style.background = ''; }, 3000);
+  }
+}
+
+function renderQuestionCard(q, idx) {
+  const typeLabels = { choice:'选择题', judge:'判断题', fill:'填空题', essay:'简答题' };
+  const diffLabels = { easy:'简单', medium:'中等', hard:'困难' };
+  return `
+    <div class="glass glass-card-sm q-card" onclick="showQuestionDetail('${q.id}')">
+      <div class="q-meta">
+        <span class="tag tag-default">#${idx}</span>
+        <span class="q-type ${q.type}">${typeLabels[q.type] || q.type}</span>
+        <span class="tag tag-${q.difficulty === 'hard' ? 'danger' : q.difficulty === 'medium' ? 'warn' : 'accent'}">${diffLabels[q.difficulty] || q.difficulty}</span>
+      </div>
+      <div class="q-content">${escapeHtml(q.content.slice(0, 120))}${q.content.length > 120 ? '...' : ''}</div>
+    </div>
+  `;
+}
+
+// =============================
+// AUTO ANSWERING
+// =============================
+async function startAnswering() {
+  const apiId = document.getElementById('ansApi').value;
+  if (!apiId) { showToast('请先配置并选择作答 API', 'error'); return; }
+
+  const scope = document.getElementById('ansScope').value;
+  const strategy = document.getElementById('ansStrategy').value;
+  const temp = parseFloat(document.getElementById('ansTemp').value);
+
+  let targetQuestions;
+  if (scope === 'unanswered') {
+    const answeredIds = new Set(state.answers.map(a => a.questionId));
+    targetQuestions = state.questions.filter(q => !answeredIds.has(q.id));
+  } else if (scope === 'recent') {
+    const oneHourAgo = Date.now() - 3600000;
+    targetQuestions = state.questions.filter(q => new Date(q.generatedAt).getTime() > oneHourAgo);
+  } else if (scope === 'wrong-review') {
+    const wrongIds = new Set(state.wrongQuestions.map(w => w.questionId));
+    targetQuestions = state.questions.filter(q => wrongIds.has(q.id));
+  } else {
+    targetQuestions = [...state.questions];
+  }
+
+  if (targetQuestions.length === 0) {
+    showToast('没有符合条件的待作答题目', 'warning');
+    return;
+  }
+
+  const btn = document.getElementById('ansBtn');
+  const progressCard = document.getElementById('ansProgressCard');
+  const progressBar = document.getElementById('ansProgressBar');
+  const progressText = document.getElementById('ansProgressText');
+  const correctCountEl = document.getElementById('ansCorrectCount');
+  const wrongCountEl = document.getElementById('ansWrongCount');
+  const resultsDiv = document.getElementById('ansResults');
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> 作答中...';
+  progressCard.style.display = '';
+  progressBar.style.width = '0%';
+  resultsDiv.innerHTML = '';
+  let correctCount = 0, wrongCount = 0;
+
+  addLog('info', `开始自动作答 ${targetQuestions.length} 道题目`);
+
+  const strategyPrompts = {
+    direct: '请直接作答，给出你认为正确的答案。',
+    cot: '请先进行推理分析，然后给出你认为正确的答案。回答格式：先写推理过程，最后用"答案："标出最终答案。',
+    careful: '请审慎作答。仔细分析每个选项，排除错误选项，最终给出你最有把握的答案。如果不确定，请标注置信度。'
+  };
+
+  for (let i = 0; i < targetQuestions.length; i++) {
+    const q = targetQuestions[i];
+    progressText.textContent = `${i + 1}/${targetQuestions.length}`;
+    progressBar.style.width = `${((i + 1) / targetQuestions.length) * 100}%`;
+
+    try {
+      const prompt = `你是一个AI考生，请认真作答以下题目。\n\n${strategyPrompts[strategy]}\n\n题目：${q.content}\n${q.options?.length ? '选项：\n' + q.options.join('\n') : ''}\n\n请直接给出答案（对于选择题只写字母如A，判断题写"正确"或"错误"，填空题写答案内容）。`;
+
+      const aiAnswer = await callAI(apiId, [{ role: 'user', content: prompt }], temp);
+
+      // Determine correctness
+      const isCorrect = checkAnswer(q, aiAnswer);
+
+      const answer = {
+        id: 'a_' + Date.now() + '_' + i,
+        questionId: q.id,
+        aiModel: state.apiConfigs.find(c => c.id === apiId)?.model || 'unknown',
+        answer: aiAnswer,
+        isCorrect,
+        answeredAt: new Date().toISOString()
+      };
+      state.answers.push(answer);
+      state.stats.totalAnswered++;
+
+      if (isCorrect) {
+        correctCount++;
+        state.stats.totalCorrect++;
+      } else {
+        wrongCount++;
+        state.stats.totalWrong++;
+        addWrongQuestion(q, aiAnswer);
+      }
+
+      correctCountEl.textContent = `✓ ${correctCount} 正确`;
+      wrongCountEl.textContent = `✗ ${wrongCount} 错误`;
+
+      // Add to preview
+      resultsDiv.innerHTML += `
+        <div class="glass glass-card-sm" style="border-left:3px solid ${isCorrect ? 'var(--accent)' : 'var(--danger)'}">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span class="tag ${isCorrect ? 'tag-accent' : 'tag-danger'}">${isCorrect ? '✓ 正确' : '✗ 错误'}</span>
+            <span class="q-type ${q.type}">${q.type === 'choice' ? '选择' : q.type === 'judge' ? '判断' : q.type === 'fill' ? '填空' : '简答'}</span>
+          </div>
+          <div style="font-size:.82rem;color:var(--text-secondary);margin-bottom:4px">${escapeHtml(q.content.slice(0, 80))}</div>
+          <div style="font-size:.75rem;color:var(--text-dim)">AI答案: ${escapeHtml(aiAnswer.slice(0, 60))} | 正确答案: ${escapeHtml(q.answer)}</div>
+        </div>
+      `;
+
+      // Scroll to bottom
+      resultsDiv.scrollTop = resultsDiv.scrollHeight;
+
+      // Rate limiting
+      if (i < targetQuestions.length - 1) {
+        await delay(state.settings.interval);
+      }
+    } catch(e) {
+      addLog('error', `作答失败 (题目 ${i + 1}): ${e.message}`);
+      resultsDiv.innerHTML += `
+        <div class="glass glass-card-sm" style="border-left:3px solid var(--warn)">
+          <span class="tag tag-warn">⚠ 失败</span>
+          <div style="font-size:.78rem;color:var(--text-dim);margin-top:4px">${escapeHtml(e.message)}</div>
+        </div>
+      `;
+    }
+  }
+
+  addLog('success', `作答完成: ${correctCount} 正确, ${wrongCount} 错误`);
+  showToast(`作答完成: ${correctCount} 正确, ${wrongCount} 错误`, correctCount > wrongCount ? 'success' : 'warning');
+  recordHistory('answer', targetQuestions.length);
+  saveState();
+
+  btn.disabled = false;
+  btn.innerHTML = '🤖 开始作答';
+  refreshDashboard();
+}
+
+function checkAnswer(question, aiAnswer) {
+  const mode = state.settings.judgeMode;
+  const correctAnswer = question.answer.trim();
+  const userAnswer = aiAnswer.trim();
+
+  if (mode === 'exact') {
+    return extractAnswer(question, userAnswer) === correctAnswer;
+  }
+
+  if (mode === 'contains') {
+    return userAnswer.includes(correctAnswer) || correctAnswer.includes(userAnswer);
+  }
+
+  // AI mode - simplified: compare extracted answers
+  return extractAnswer(question, userAnswer).toLowerCase() === correctAnswer.toLowerCase();
+}
+
+function extractAnswer(question, raw) {
+  if (question.type === 'choice') {
+    const match = raw.match(/[A-D]/i);
+    return match ? match[0].toUpperCase() : raw.trim();
+  }
+  if (question.type === 'judge') {
+    if (/正确|对|√|true|是/i.test(raw)) return '正确';
+    if (/错误|错|×|false|否/i.test(raw)) return '错误';
+    return raw.trim();
+  }
+  // For fill/essay, try to extract the answer after "答案："
+  const ansMatch = raw.match(/答案[：:]\s*(.+)/);
+  if (ansMatch) return ansMatch[1].trim();
+  return raw.trim();
+}
+
+function addWrongQuestion(question, aiAnswer) {
+  const existing = state.wrongQuestions.find(w => w.questionId === question.id);
+  if (existing) {
+    existing.count = (existing.count || 1) + 1;
+    existing.lastWrongAnswer = aiAnswer;
+    existing.lastWrongAt = new Date().toISOString();
+  } else {
+    state.wrongQuestions.push({
+      id: 'w_' + Date.now(),
+      questionId: question.id,
+      tags: [question.type, question.difficulty, question.topic || ''].filter(Boolean),
+      notes: '',
+      count: 1,
+      lastWrongAnswer: aiAnswer,
+      lastWrongAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    });
+  }
+  document.getElementById('wrongCount').textContent = state.wrongQuestions.length;
+}
+
+// =============================
+// WORKFLOW
+// =============================
+async function runWorkflow() {
+  if (state.apiConfigs.length === 0) {
+    showToast('请先配置至少一个 API', 'error');
+    return;
+  }
+  const topic = document.getElementById('genTopic')?.value?.trim();
+  if (!topic) {
+    showToast('请先在"题目生成"页面配置主题', 'warning');
+    document.querySelector('[data-view="generate"]').click();
+    return;
+  }
+
+  workflowRunning = true;
+  workflowAbort = false;
+  document.getElementById('wfBtn').style.display = 'none';
+  document.getElementById('wfStopBtn').style.display = '';
+
+  const mode = document.querySelector('input[name="wfMode"]:checked').value;
+  const steps = ['wfStep1', 'wfStep2', 'wfStep3', 'wfStep4'];
+  const logDiv = document.getElementById('wfLog');
+  logDiv.innerHTML = '';
+
+  function wfLog(msg, level = 'info') {
+    const time = new Date().toLocaleTimeString();
+    const colors = { info:'var(--info)', success:'var(--accent)', warn:'var(--warn)', error:'var(--danger)' };
+    logDiv.innerHTML += `<div class="log-entry"><span class="log-time">${time}</span><span class="log-level ${level}">[${level}]</span><span class="log-msg">${escapeHtml(msg)}</span></div>`;
+    logDiv.scrollTop = logDiv.scrollHeight;
+  }
+
+  function setStep(idx, status) {
+    steps.forEach((s, i) => {
+      const el = document.getElementById(s);
+      el.classList.remove('active', 'done');
+      if (i < idx) el.classList.add('done');
+      if (i === idx) el.classList.add(status);
+    });
+  }
+
+  try {
+    // Step 1: Config
+    setStep(0, 'active');
+    wfLog('工作流启动 - 配置参数');
+    wfLog(`主题: ${topic}, 数量: ${document.getElementById('genCount')?.value || 5}`);
+    if (mode === 'manual') {
+      wfLog('手动模式：请确认参数后继续');
+      await waitForConfirm();
+    }
+    setStep(0, 'done');
+    wfLog('参数配置完成', 'success');
+    await delay(500);
+
+    // Step 2: Generate
+    setStep(1, 'active');
+    wfLog('步骤 2: 开始生成题目...');
+    document.querySelector('[data-view="generate"]').click();
+    await delay(300);
+    await startGeneration();
+    if (workflowAbort) throw new Error('工作流已停止');
+    setStep(1, 'done');
+    wfLog(`题目生成完成，共 ${state.questions.length} 道题`, 'success');
+    if (mode === 'manual') {
+      wfLog('手动模式：题目已生成，请确认后继续');
+      await waitForConfirm();
+    }
+    await delay(500);
+
+    // Step 3: Answer
+    setStep(2, 'active');
+    wfLog('步骤 3: 开始自动作答...');
+    document.querySelector('[data-view="answer"]').click();
+    document.getElementById('ansScope').value = 'unanswered';
+    await delay(300);
+    await startAnswering();
+    if (workflowAbort) throw new Error('工作流已停止');
+    setStep(2, 'done');
+    wfLog('自动作答完成', 'success');
+    if (mode === 'manual') {
+      wfLog('手动模式：作答已完成，请确认后继续');
+      await waitForConfirm();
+    }
+    await delay(500);
+
+    // Step 4: Judge & Archive
+    setStep(3, 'active');
+    wfLog('步骤 4: 判定与归档...');
+    const totalAnswered = state.stats.totalAnswered;
+    const totalCorrect = state.stats.totalCorrect;
+    const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+    wfLog(`总作答: ${totalAnswered}, 正确: ${totalCorrect}, 正确率: ${accuracy}%`);
+    wfLog(`错题归档: ${state.wrongQuestions.length} 道`);
+    setStep(3, 'done');
+    saveState();
+    wfLog('工作流全部完成！', 'success');
+    showToast('工作流执行完成！', 'success');
+    addLog('success', '一键工作流执行完成');
+
+  } catch(e) {
+    wfLog(`工作流异常: ${e.message}`, 'error');
+    addLog('error', `工作流异常: ${e.message}`);
+    showToast('工作流异常: ' + e.message, 'error');
+  } finally {
+    workflowRunning = false;
+    document.getElementById('wfBtn').style.display = '';
+    document.getElementById('wfStopBtn').style.display = 'none';
+  }
+}
+
+function stopWorkflow() {
+  workflowAbort = true;
+  showToast('正在停止工作流...', 'warning');
+}
+
+function waitForConfirm() {
+  return new Promise(resolve => {
+    const logDiv = document.getElementById('wfLog');
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-primary btn-sm';
+    btn.style.margin = '10px 0';
+    btn.textContent = '✓ 确认继续';
+    btn.onclick = () => { btn.remove(); resolve(); };
+    logDiv.appendChild(btn);
+    logDiv.scrollTop = logDiv.scrollHeight;
+  });
+}
+
+// =============================
+// QUESTIONS TABLE
+// =============================
+function renderQuestions() {
+  const search = (document.getElementById('qSearch')?.value || '').toLowerCase();
+  const filterType = document.getElementById('qFilterType')?.value || '';
+  const filterDiff = document.getElementById('qFilterDiff')?.value || '';
+
+  let filtered = state.questions.filter(q => {
+    if (search && !q.content.toLowerCase().includes(search)) return false;
+    if (filterType && q.type !== filterType) return false;
+    if (filterDiff && q.difficulty !== filterDiff) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('questionsTable');
+  const empty = document.getElementById('questionsEmpty');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const typeLabels = { choice:'选择', judge:'判断', fill:'填空', essay:'简答' };
+  const diffLabels = { easy:'简单', medium:'中等', hard:'困难' };
+  const answeredIds = new Set(state.answers.map(a => a.questionId));
+
+  tbody.innerHTML = filtered.map((q, i) => {
+    const status = answeredIds.has(q.id)
+      ? '<span class="tag tag-accent">已作答</span>'
+      : '<span class="tag tag-default">未作答</span>';
+    return `
+      <tr>
+        <td style="color:var(--text-dim)">${i + 1}</td>
+        <td style="color:var(--text)">${escapeHtml(q.content.slice(0, 60))}${q.content.length > 60 ? '...' : ''}</td>
+        <td><span class="q-type ${q.type}">${typeLabels[q.type] || q.type}</span></td>
+        <td><span class="difficulty-${q.difficulty}">${diffLabels[q.difficulty] || q.difficulty}</span></td>
+        <td>${status}</td>
+        <td>
+          <div style="display:flex;gap:4px">
+            <button class="btn-icon" onclick="showQuestionDetail('${q.id}')" title="查看">👁️</button>
+            <button class="btn-icon" onclick="deleteQuestion('${q.id}')" title="删除">🗑️</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function deleteQuestion(id) {
+  if (!confirm('确定删除此题？')) return;
+  state.questions = state.questions.filter(q => q.id !== id);
+  state.answers = state.answers.filter(a => a.questionId !== id);
+  saveState();
+  renderQuestions();
+  showToast('题目已删除', 'info');
+}
+
+function showQuestionDetail(id) {
+  const q = state.questions.find(q => q.id === id);
+  if (!q) return;
+  const answers = state.answers.filter(a => a.questionId === id);
+  const typeLabels = { choice:'选择题', judge:'判断题', fill:'填空题', essay:'简答题' };
+  const diffLabels = { easy:'简单', medium:'中等', hard:'困难' };
+
+  let html = `
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <span class="q-type ${q.type}">${typeLabels[q.type]}</span>
+      <span class="difficulty-${q.difficulty}">${diffLabels[q.difficulty]}</span>
+      ${q.topic ? `<span class="tag tag-default">${escapeHtml(q.topic)}</span>` : ''}
+    </div>
+    <div style="font-size:.92rem;line-height:1.8;margin-bottom:16px;padding:16px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm)">
+      ${escapeHtml(q.content)}
+    </div>
+  `;
+  if (q.options?.length) {
+    html += `<div style="margin-bottom:16px">
+      ${q.options.map(o => `<div style="padding:6px 12px;margin:4px 0;font-size:.84rem;color:var(--text-secondary);background:rgba(255,255,255,0.02);border-radius:var(--radius-xs)">${escapeHtml(o)}</div>`).join('')}
+    </div>`;
+  }
+  html += `<div style="padding:12px;background:var(--accent-dim);border-radius:var(--radius-xs);margin-bottom:16px">
+    <div style="font-size:.72rem;font-weight:600;color:var(--accent);margin-bottom:4px">正确答案</div>
+    <div style="font-size:.88rem">${escapeHtml(q.answer)}</div>
+  </div>`;
+  if (q.explanation) {
+    html += `<div style="padding:12px;background:var(--info-dim);border-radius:var(--radius-xs);margin-bottom:16px">
+      <div style="font-size:.72rem;font-weight:600;color:var(--info);margin-bottom:4px">解析</div>
+      <div style="font-size:.84rem;color:var(--text-secondary)">${escapeHtml(q.explanation)}</div>
+    </div>`;
+  }
+  if (answers.length > 0) {
+    html += `<div class="section-title" style="margin-top:16px">作答记录</div>`;
+    answers.forEach(a => {
+      html += `<div style="padding:10px 14px;margin:6px 0;border-left:3px solid ${a.isCorrect ? 'var(--accent)' : 'var(--danger)'};background:rgba(255,255,255,0.02);border-radius:0 var(--radius-xs) var(--radius-xs) 0">
+        <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-dim);margin-bottom:4px">
+          <span>${a.aiModel}</span>
+          <span>${new Date(a.answeredAt).toLocaleString()}</span>
+        </div>
+        <div style="font-size:.84rem">${escapeHtml(a.answer.slice(0, 200))}</div>
+      </div>`;
+    });
+  }
+
+  document.getElementById('qDetailContent').innerHTML = html;
+  openModal('qDetailModal');
+}
+
+// =============================
+// WRONG QUESTIONS
+// =============================
+function renderWrongQuestions() {
+  const search = (document.getElementById('wSearch')?.value || '').toLowerCase();
+  const filterType = document.getElementById('wFilterType')?.value || '';
+  const filterTag = document.getElementById('wFilterTag')?.value || '';
+
+  // Update tag filter
+  const allTags = new Set();
+  state.wrongQuestions.forEach(w => w.tags?.forEach(t => allTags.add(t)));
+  const tagSel = document.getElementById('wFilterTag');
+  const currentTag = tagSel.value;
+  tagSel.innerHTML = '<option value="">全部标签</option>' + [...allTags].map(t => `<option value="${t}" ${t===currentTag?'selected':''}>${t}</option>`).join('');
+
+  let filtered = state.wrongQuestions.filter(w => {
+    const q = state.questions.find(q => q.id === w.questionId);
+    if (!q) return false;
+    if (search && !q.content.toLowerCase().includes(search)) return false;
+    if (filterType && q.type !== filterType) return false;
+    if (filterTag && !w.tags?.includes(filterTag)) return false;
+    return true;
+  });
+
+  const list = document.getElementById('wrongList');
+  const empty = document.getElementById('wrongEmpty');
+
+  if (filtered.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  list.innerHTML = filtered.map(w => {
+    const q = state.questions.find(q => q.id === w.questionId);
+    if (!q) return '';
+    return `
+      <div class="glass glass-card-sm" style="border-left:3px solid var(--danger)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="q-type ${q.type}">${q.type === 'choice' ? '选择' : q.type === 'judge' ? '判断' : q.type === 'fill' ? '填空' : '简答'}</span>
+            ${(w.tags || []).map(t => `<span class="tag tag-default">${escapeHtml(t)}</span>`).join('')}
+            <span class="tag tag-danger">错误 ${w.count} 次</span>
+          </div>
+          <div style="display:flex;gap:4px">
+            <button class="btn-icon" onclick="showQuestionDetail('${q.id}')" title="查看">👁️</button>
+            <button class="btn-icon" onclick="removeWrong('${w.id}')" title="已掌握">✓</button>
+          </div>
+        </div>
+        <div style="font-size:.86rem;line-height:1.7;margin-bottom:8px">${escapeHtml(q.content.slice(0, 150))}</div>
+        <div style="display:flex;gap:16px;font-size:.75rem;color:var(--text-dim)">
+          <span>正确答案: <span style="color:var(--accent)">${escapeHtml(q.answer)}</span></span>
+          <span>AI答案: <span style="color:var(--danger)">${escapeHtml((w.lastWrongAnswer || '').slice(0, 30))}</span></span>
+          <span>${w.lastWrongAt ? new Date(w.lastWrongAt).toLocaleDateString() : ''}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('wrongCount').textContent = state.wrongQuestions.length;
+}
+
+function removeWrong(id) {
+  state.wrongQuestions = state.wrongQuestions.filter(w => w.id !== id);
+  saveState();
+  renderWrongQuestions();
+  showToast('已从错题本移除', 'success');
+}
+
+async function retryWrongQuestions() {
+  document.querySelector('[data-view="answer"]').click();
+  document.getElementById('ansScope').value = 'wrong-review';
+  showToast('已切换到错题重做模式，点击"开始作答"执行', 'info');
+}
+
+// =============================
+// DASHBOARD
+// =============================
+function refreshDashboard() {
+  document.getElementById('statTotalQ').textContent = state.stats.totalGenerated;
+  document.getElementById('statTotalA').textContent = state.stats.totalAnswered;
+  const accuracy = state.stats.totalAnswered > 0
+    ? Math.round((state.stats.totalCorrect / state.stats.totalAnswered) * 100)
+    : 0;
+  document.getElementById('statAccuracy').textContent = accuracy + '%';
+  document.getElementById('statWrong').textContent = state.wrongQuestions.length;
+  document.getElementById('wrongCount').textContent = state.wrongQuestions.length;
+
+  renderCharts();
+  renderRecentActivity();
+}
+
+let trendChart, typeChart, diffChart;
+
+function renderCharts() {
+  // Trend chart
+  const history = state.stats.history || [];
+  const labels = history.slice(-7).map(h => {
+    const d = new Date(h.date);
+    return `${d.getMonth()+1}/${d.getDate()}`;
+  });
+  const genData = history.slice(-7).map(h => h.generated || 0);
+  const ansData = history.slice(-7).map(h => h.answered || 0);
+  const accData = history.slice(-7).map(h => h.accuracy || 0);
+
+  const chartOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#8b90a0', font: { size: 11 } } } },
+    scales: {
+      x: { ticks: { color: '#555a6e' }, grid: { color: 'rgba(255,255,255,0.03)' } },
+      y: { ticks: { color: '#555a6e' }, grid: { color: 'rgba(255,255,255,0.03)' } }
+    }
+  };
+
+  if (trendChart) trendChart.destroy();
+  trendChart = new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+      labels: labels.length ? labels : ['暂无数据'],
+      datasets: [
+        { label: '生成', data: genData.length ? genData : [0], borderColor: '#00d4aa', backgroundColor: 'rgba(0,212,170,0.1)', fill: true, tension: 0.4 },
+        { label: '作答', data: ansData.length ? ansData : [0], borderColor: '#7c6aef', backgroundColor: 'rgba(124,106,239,0.1)', fill: true, tension: 0.4 },
+        { label: '正确率%', data: accData.length ? accData : [0], borderColor: '#3b82f6', borderDash: [5,5], tension: 0.4, yAxisID: 'y1' }
+      ]
+    },
+    options: {
+      ...chartOpts,
+      scales: {
+        ...chartOpts.scales,
+        y1: { position: 'right', ticks: { color: '#555a6e', callback: v => v + '%' }, grid: { display: false }, min: 0, max: 100 }
+      }
+    }
+  });
+
+  // Type distribution
+  const typeCounts = {};
+  state.questions.forEach(q => { typeCounts[q.type] = (typeCounts[q.type] || 0) + 1; });
+  const typeLabels2 = { choice:'选择题', judge:'判断题', fill:'填空题', essay:'简答题' };
+
+  if (typeChart) typeChart.destroy();
+  typeChart = new Chart(document.getElementById('typeChart'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(typeCounts).map(k => typeLabels2[k] || k),
+      datasets: [{
+        data: Object.values(typeCounts),
+        backgroundColor: ['#3b82f6', '#00d4aa', '#7c6aef', '#f59e0b'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { color: '#8b90a0', padding: 12 } } }
+    }
+  });
+
+  // Difficulty distribution
+  const diffCounts = { easy: 0, medium: 0, hard: 0 };
+  state.questions.forEach(q => { if (diffCounts[q.difficulty] !== undefined) diffCounts[q.difficulty]++; });
+
+  if (diffChart) diffChart.destroy();
+  diffChart = new Chart(document.getElementById('diffChart'), {
+    type: 'bar',
+    data: {
+      labels: ['简单', '中等', '困难'],
+      datasets: [{
+        data: [diffCounts.easy, diffCounts.medium, diffCounts.hard],
+        backgroundColor: ['rgba(0,212,170,0.5)', 'rgba(245,158,11,0.5)', 'rgba(239,68,68,0.5)'],
+        borderColor: ['#00d4aa', '#f59e0b', '#ef4444'],
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      ...chartOpts,
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function renderRecentActivity() {
+  const el = document.getElementById('recentActivity');
+  const recent = state.logs.slice(0, 15);
+  if (recent.length === 0) {
+    el.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:30px;font-size:.84rem">暂无活动记录</div>';
+    return;
+  }
+  el.innerHTML = recent.map(l => `
+    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:.78rem">
+      <span style="color:${l.level === 'success' ? 'var(--accent)' : l.level === 'error' ? 'var(--danger)' : l.level === 'warn' ? 'var(--warn)' : 'var(--text-dim)'};flex-shrink:0">
+        ${l.level === 'success' ? '✓' : l.level === 'error' ? '✕' : l.level === 'warn' ? '⚠' : 'ℹ'}
+      </span>
+      <span style="color:var(--text-secondary);flex:1">${escapeHtml(l.message.slice(0, 60))}</span>
+      <span style="color:var(--text-dim);flex-shrink:0">${new Date(l.timestamp).toLocaleTimeString()}</span>
+    </div>
+  `).join('');
+}
+
+// =============================
+// LOGS
+// =============================
+function renderLogs() {
+  const filter = document.getElementById('logFilter')?.value || '';
+  const filtered = filter ? state.logs.filter(l => l.level === filter) : state.logs;
+  const list = document.getElementById('logList');
+  const empty = document.getElementById('logEmpty');
+
+  if (filtered.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  list.innerHTML = filtered.slice(0, 200).map(l => `
+    <div class="log-entry">
+      <span class="log-time">${new Date(l.timestamp).toLocaleTimeString()}</span>
+      <span class="log-level ${l.level}">${l.level}</span>
+      <span style="color:var(--secondary);min-width:50px;font-size:.7rem">[${l.module || '系统'}]</span>
+      <span class="log-msg">${escapeHtml(l.message)}</span>
+    </div>
+  `).join('');
+}
+
+function clearLogs() {
+  if (!confirm('确定清空日志？')) return;
+  state.logs = [];
+  saveState();
+  renderLogs();
+  showToast('日志已清空', 'info');
+}
+
+// =============================
+// SETTINGS
+// =============================
+function refreshSettings() {
+  refreshApiSelects();
+  document.getElementById('settingGenApi').innerHTML = '<option value="">未选择</option>' +
+    state.apiConfigs.map(c => `<option value="${c.id}" ${c.id === state.settings.genApiId ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('');
+  document.getElementById('settingAnsApi').innerHTML = '<option value="">未选择</option>' +
+    state.apiConfigs.map(c => `<option value="${c.id}" ${c.id === state.settings.ansApiId ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('');
+  document.getElementById('settingInterval').value = state.settings.interval;
+  document.getElementById('settingMaxBatch').value = state.settings.maxBatch;
+  document.getElementById('settingAutoSave').value = state.settings.autoSave;
+  document.getElementById('settingJudgeMode').value = state.settings.judgeMode;
+  document.getElementById('settingJudgeTemp').value = state.settings.judgeTemp;
+  document.getElementById('settingJudgeTempVal').textContent = '当前值: ' + state.settings.judgeTemp;
+  document.getElementById('settingPassThreshold').value = state.settings.passThreshold;
+  document.getElementById('settingJudgePrompt').value = state.settings.judgePrompt;
+}
+
+function saveSettings() {
+  state.settings.genApiId = document.getElementById('settingGenApi')?.value || state.settings.genApiId;
+  state.settings.ansApiId = document.getElementById('settingAnsApi')?.value || state.settings.ansApiId;
+  state.settings.interval = parseInt(document.getElementById('settingInterval')?.value) || 1000;
+  state.settings.maxBatch = parseInt(document.getElementById('settingMaxBatch')?.value) || 20;
+  state.settings.autoSave = parseInt(document.getElementById('settingAutoSave')?.value) || 30;
+  state.settings.judgeMode = document.getElementById('settingJudgeMode')?.value || 'ai';
+  state.settings.judgeTemp = parseFloat(document.getElementById('settingJudgeTemp')?.value) || 0.1;
+  state.settings.passThreshold = parseInt(document.getElementById('settingPassThreshold')?.value) || 60;
+  state.settings.judgePrompt = document.getElementById('settingJudgePrompt')?.value || '';
+  saveState();
+  showToast('设置已保存', 'success');
+  addLog('success', '系统设置已更新');
+}
+
+// =============================
+// DATA IMPORT/EXPORT
+// =============================
+function exportAllData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `questflow_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('数据已导出', 'success');
+  addLog('success', '数据导出完成');
+}
+
+function importAllData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (imported.questions || imported.apiConfigs) {
+        state = { ...JSON.parse(JSON.stringify(DEFAULT_STATE)), ...imported };
+        saveState();
+        showToast('数据导入成功', 'success');
+        addLog('success', '数据导入完成');
+        refreshDashboard();
+      } else {
+        showToast('无效的数据文件', 'error');
+      }
+    } catch(err) {
+      showToast('导入失败: ' + err.message, 'error');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function exportQuestions() {
+  if (state.questions.length === 0) { showToast('暂无题目可导出', 'warning'); return; }
+  const blob = new Blob([JSON.stringify(state.questions, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `questions_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('题目已导出', 'success');
+}
+
+function exportWrongQuestions() {
+  if (state.wrongQuestions.length === 0) { showToast('暂无错题可导出', 'warning'); return; }
+  const exportData = state.wrongQuestions.map(w => {
+    const q = state.questions.find(q => q.id === w.questionId);
+    return { ...w, question: q };
+  });
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `wrong_questions_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('错题已导出', 'success');
+}
+
+function clearAllData() {
+  if (!confirm('确定清空所有数据？此操作不可恢复！')) return;
+  if (!confirm('再次确认：这将清除所有题目、答案、错题和配置。')) return;
+  state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  localStorage.removeItem('questflow_state');
+  showToast('所有数据已清空', 'info');
+  refreshDashboard();
+}
+
+// =============================
+// UTILITIES
+// =============================
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function recordHistory(type, count) {
+  const today = new Date().toISOString().slice(0, 10);
+  let entry = state.stats.history.find(h => h.date === today);
+  if (!entry) {
+    entry = { date: today, generated: 0, answered: 0, correct: 0, accuracy: 0 };
+    state.stats.history.push(entry);
+    if (state.stats.history.length > 30) state.stats.history = state.stats.history.slice(-30);
+  }
+  if (type === 'generate') entry.generated += count;
+  if (type === 'answer') {
+    entry.answered += count;
+    entry.correct = state.stats.totalCorrect;
+    entry.accuracy = state.stats.totalAnswered > 0
+      ? Math.round((state.stats.totalCorrect / state.stats.totalAnswered) * 100) : 0;
+  }
+}
+
+// Range slider value display
+document.getElementById('settingJudgeTemp').addEventListener('input', (e) => {
+  document.getElementById('settingJudgeTempVal').textContent = '当前值: ' + e.target.value;
+});
+document.getElementById('ansTemp').addEventListener('input', (e) => {
+  document.getElementById('ansTempVal').textContent = '当前值: ' + e.target.value;
+});
+
+// =============================
+// INITIALIZATION
+// =============================
+function init() {
+  loadState();
+  renderApiConfigs();
+  refreshDashboard();
+  document.getElementById('wrongCount').textContent = state.wrongQuestions.length;
+  addLog('info', '系统已启动');
+
+  // Auto-save
+  setInterval(saveState, (state.settings.autoSave || 30) * 1000);
+}
+
+init();
+</script>
+</body>
+</html>
