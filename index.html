@@ -152,26 +152,42 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
 .pin-inputs input{width:48px;height:56px;text-align:center;font-size:1.5rem;font-weight:700;background:rgba(255,255,255,0.04);border:2px solid var(--glass-border);border-radius:12px;color:var(--text);outline:none;transition:border-color .2s;font-family:'Syne',sans-serif;-webkit-text-security:disc}
 .pin-inputs input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
 .pin-error{color:var(--danger);font-size:.8rem;margin-bottom:14px;min-height:1.2em}
-.onboard-overlay{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,0.7);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:20px 0}
-.onboard-card{width:94%;max-width:520px;background:rgba(16,18,30,0.95);backdrop-filter:blur(40px);border:1px solid var(--glass-border);border-radius:var(--radius);padding:32px 24px;text-align:center;margin:auto}
-.onboard-card h1{font-family:'Syne',sans-serif;font-size:1.6rem;margin-bottom:6px;background:linear-gradient(135deg,var(--accent),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.onboard-card .onboard-sub{color:var(--text-secondary);font-size:.82rem;margin-bottom:20px}
-.onboard-steps{display:flex;gap:6px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
-.onboard-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.1);transition:all .3s;cursor:pointer}
-.onboard-dot.active{background:var(--accent);box-shadow:0 0 8px var(--accent-glow);transform:scale(1.3)}.onboard-dot.done{background:var(--accent);opacity:0.5}
-.onboard-body{text-align:left;margin-bottom:20px;min-height:80px}
-.onboard-body h3{font-size:1.05rem;margin-bottom:4px;text-align:center;font-weight:700}
-.onboard-body .ob-desc{color:var(--text-secondary);font-size:.82rem;line-height:1.7;margin-bottom:12px;text-align:center}
-.onboard-body .ob-features{display:flex;flex-direction:column;gap:8px}
-.onboard-body .ob-feat{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:var(--radius-xs);background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04)}
-.onboard-body .ob-feat-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
-.onboard-body .ob-feat-text{font-size:.82rem;color:var(--text-secondary);line-height:1.6}
-.onboard-body .ob-feat-text strong{color:var(--text);font-weight:600}
-.onboard-body .ob-highlight{display:flex;align-items:center;gap:10px;padding:12px;border-radius:var(--radius-xs);background:var(--accent-dim);border:1px solid rgba(0,212,170,0.2);margin-top:8px;font-size:.82rem;color:var(--accent);line-height:1.6;text-align:center;justify-content:center}
-.onboard-body .ob-flow{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:12px;flex-wrap:wrap;font-size:.78rem;color:var(--text-dim)}
-.onboard-body .ob-flow-step{padding:4px 10px;border-radius:4px;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);color:var(--text-secondary);font-weight:500}
-.onboard-body .ob-flow-arrow{color:var(--accent);font-size:.9rem}
-.onboard-btns{display:flex;gap:10px;justify-content:center}
+.onboard-overlay{position:fixed;inset:0;z-index:4000;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto}
+.onboard-overlay::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 30%,rgba(0,212,170,0.06),transparent 70%),radial-gradient(ellipse 50% 70% at 80% 80%,rgba(124,106,239,0.04),transparent 60%);pointer-events:none}
+.onboard-card{position:relative;z-index:1;width:92%;max-width:440px;padding:24px 0;text-align:center;display:flex;flex-direction:column;min-height:0}
+.onboard-skip{position:absolute;top:0;right:0;background:none;border:none;color:var(--text-dim);font-size:.84rem;cursor:pointer;padding:8px 0;font-family:inherit}
+.onboard-icon-wrap{width:88px;height:88px;border-radius:24px;margin:20px auto 24px;display:flex;align-items:center;justify-content:center;font-size:2.6rem;background:linear-gradient(135deg,rgba(0,212,170,0.08),rgba(124,106,239,0.08));border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(20px)}
+.onboard-headline{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:8px;line-height:1.2}
+.onboard-desc{color:var(--text-secondary);font-size:.88rem;line-height:1.7;margin-bottom:28px;max-width:360px;margin-left:auto;margin-right:auto}
+.onboard-features{text-align:left;margin-bottom:24px;max-width:380px;margin-left:auto;margin-right:auto}
+.onboard-feat{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.onboard-feat:last-child{border-bottom:none}
+.onboard-feat-circle{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.onboard-feat-circle.green{background:var(--accent-dim);color:var(--accent)}
+.onboard-feat-circle.blue{background:var(--info-dim);color:var(--info)}
+.onboard-feat-circle.purple{background:var(--secondary-dim);color:var(--secondary)}
+.onboard-feat-circle.orange{background:var(--warn-dim);color:var(--warn)}
+.onboard-feat-content{flex:1}.onboard-feat-title{font-weight:600;font-size:.88rem;margin-bottom:2px}.onboard-feat-sub{font-size:.78rem;color:var(--text-dim);line-height:1.5}
+.onboard-highlight{padding:14px 16px;border-radius:var(--radius-sm);background:rgba(0,212,170,0.06);border:1px solid rgba(0,212,170,0.15);margin-bottom:24px;max-width:380px;margin-left:auto;margin-right:auto}
+.onboard-highlight-text{font-size:.8rem;color:var(--accent);line-height:1.6;display:flex;align-items:flex-start;gap:8px;text-align:left}
+.onboard-highlight-text .hl-icon{flex-shrink:0;font-size:.9rem;margin-top:1px}
+.onboard-pages{display:flex;justify-content:center;gap:5px;margin-bottom:28px}
+.onboard-page{height:6px;border-radius:3px;background:rgba(255,255,255,0.1);transition:all .35s cubic-bezier(.4,0,.2,1);min-width:6px}
+.onboard-page.active{width:24px;background:var(--accent)}.onboard-page.done{background:var(--accent);opacity:0.4;min-width:6px;width:6px}
+.onboard-flow{display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:24px;flex-wrap:wrap}
+.onboard-flow-chip{padding:5px 10px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);font-size:.72rem;color:var(--text-secondary);font-weight:500}
+.onboard-flow-arrow{color:var(--accent);font-size:.7rem;margin:0 1px}
+.onboard-btns{display:flex;flex-direction:column;gap:10px;align-items:center}
+.onboard-btn-continue{width:100%;max-width:320px;padding:14px;border-radius:14px;font-size:.95rem;font-weight:600;font-family:inherit;background:var(--accent);color:#0a0f0d;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px var(--accent-glow)}
+.onboard-btn-continue:hover{box-shadow:0 6px 30px var(--accent-glow);transform:translateY(-1px)}
+.onboard-btn-skip{background:none;border:none;color:var(--text-dim);font-size:.82rem;cursor:pointer;padding:8px 16px;font-family:inherit;transition:color .2s}
+.onboard-btn-skip:hover{color:var(--text-secondary)}
+@keyframes obSlideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.onboard-body{animation:obSlideIn .4s ease}
+.format-box{padding:14px;background:rgba(0,0,0,0.25);border-radius:var(--radius-xs);font-size:.78rem;font-family:monospace;line-height:1.8;color:var(--text-secondary);overflow-x:auto;white-space:pre;border:1px solid var(--glass-border)}
+.ans-result-item{cursor:pointer;transition:border-color .2s}
+.ans-result-item:hover{border-left-color:var(--accent)!important}
+.beta-tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.6rem;font-weight:700;background:var(--warn-dim);color:var(--warn);margin-left:6px;vertical-align:middle}
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
   .main{margin-left:0;padding-bottom:var(--bottomnav-h)}
@@ -189,9 +205,9 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
   .chart-container{height:170px}
   .modal{width:94%;max-height:90vh}.modal-body{padding:16px}
   .pin-inputs input{width:42px;height:50px;font-size:1.3rem}
-  .onboard-card{padding:24px 18px}
-  .onboard-card h1{font-size:1.4rem}
-  .onboard-body .ob-feat{padding:8px 10px}
+  .onboard-card{padding:16px 0}
+  .onboard-headline{font-size:1.3rem}
+  .onboard-feat{padding:12px 0}
 }
 @media(max-width:380px){.grid-4{grid-template-columns:1fr 1fr}.stat-card .stat-value{font-size:1.2rem}}
 </style>
@@ -201,8 +217,7 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
 <div class="pin-overlay" id="pinOverlay" style="display:none">
   <div class="pin-box">
     <div class="logo" style="justify-content:center;margin-bottom:24px"><div class="logo-icon">Q</div><div><div class="logo-text">QuestFlow</div></div></div>
-    <h2>🔒 安全锁定</h2>
-    <p>请输入 4 位 PIN 密码</p>
+    <h2>🔒 安全锁定</h2><p>请输入 4 位 PIN 密码</p>
     <div class="pin-inputs">
       <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" id="pin0" autocomplete="off">
       <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" id="pin1" autocomplete="off">
@@ -216,41 +231,25 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
 
 <div class="onboard-overlay" id="onboardOverlay" style="display:none">
   <div class="onboard-card">
-    <h1>QuestFlow</h1>
-    <div class="onboard-sub">智能题库工作流 · v1.0.4</div>
-    <div class="onboard-steps" id="onboardDots"></div>
-    <div class="onboard-body" id="onboardBody"></div>
+    <button class="onboard-skip" id="onboardSkip">跳过</button>
+    <div id="onboardContent"></div>
+    <div class="onboard-pages" id="onboardPages"></div>
     <div class="onboard-btns">
-      <button class="btn btn-ghost" id="onboardSkip">跳过</button>
-      <button class="btn btn-primary" id="onboardNext">下一步</button>
+      <button class="onboard-btn-continue" id="onboardNext">继续</button>
+      <button class="onboard-btn-skip" id="onboardSkipBottom" style="display:none">稍后再说</button>
     </div>
   </div>
 </div>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <aside class="sidebar" id="sidebar">
-  <div class="sidebar-header"><div class="logo"><div class="logo-icon">Q</div><div><div class="logo-text">QuestFlow</div><div class="logo-sub">智能题库工作流 · v1.0.4</div></div></div></div>
-  <nav class="nav" id="sidebarNav">
-    <div class="nav-group"><div class="nav-label">概览</div>
-      <div class="nav-item active" data-view="dashboard"><span class="nav-icon">📊</span>仪表盘</div>
-    </div>
-    <div class="nav-group"><div class="nav-label">配置</div>
-      <div class="nav-item" data-view="api-config"><span class="nav-icon">🔑</span>API 配置</div>
-      <div class="nav-item" data-view="settings"><span class="nav-icon">⚙️</span>系统设置</div>
-    </div>
-    <div class="nav-group"><div class="nav-label">工作流</div>
-      <div class="nav-item" data-view="generate"><span class="nav-icon">✨</span>题目生成</div>
-      <div class="nav-item" data-view="upload"><span class="nav-icon">📤</span>手动上传</div>
-      <div class="nav-item" data-view="answer"><span class="nav-icon">🤖</span>自动作答</div>
-      <div class="nav-item" data-view="workflow"><span class="nav-icon">🔄</span>工作流控制</div>
-    </div>
-    <div class="nav-group"><div class="nav-label">数据</div>
-      <div class="nav-item" data-view="questions"><span class="nav-icon">📝</span>题库管理</div>
-      <div class="nav-item" data-view="wrong"><span class="nav-icon">❌</span>错题本<span class="nav-badge" id="wrongCount">0</span></div>
-    </div>
-    <div class="nav-group"><div class="nav-label">系统</div>
-      <div class="nav-item" data-view="logs"><span class="nav-icon">📋</span>操作日志</div>
-    </div>
+  <div class="sidebar-header"><div class="logo"><div class="logo-icon">Q</div><div><div class="logo-text">QuestFlow</div><div class="logo-sub">智能题库工作流 · v1.0.5</div></div></div></div>
+  <nav class="nav">
+    <div class="nav-group"><div class="nav-label">概览</div><div class="nav-item active" data-view="dashboard"><span class="nav-icon">📊</span>仪表盘</div></div>
+    <div class="nav-group"><div class="nav-label">配置</div><div class="nav-item" data-view="api-config"><span class="nav-icon">🔑</span>API 配置</div><div class="nav-item" data-view="settings"><span class="nav-icon">⚙️</span>系统设置</div></div>
+    <div class="nav-group"><div class="nav-label">工作流</div><div class="nav-item" data-view="generate"><span class="nav-icon">✨</span>题目生成</div><div class="nav-item" data-view="upload"><span class="nav-icon">📤</span>手动上传</div><div class="nav-item" data-view="answer"><span class="nav-icon">🤖</span>自动作答</div><div class="nav-item" data-view="workflow"><span class="nav-icon">🔄</span>工作流控制</div></div>
+    <div class="nav-group"><div class="nav-label">数据</div><div class="nav-item" data-view="questions"><span class="nav-icon">📝</span>题库管理</div><div class="nav-item" data-view="wrong"><span class="nav-icon">❌</span>错题本<span class="nav-badge" id="wrongCount">0</span></div></div>
+    <div class="nav-group"><div class="nav-label">系统</div><div class="nav-item" data-view="logs"><span class="nav-icon">📋</span>操作日志</div></div>
   </nav>
   <div class="sidebar-footer"><span class="status-dot"></span><span>系统就绪</span></div>
 </aside>
@@ -267,10 +266,7 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
 
 <div class="main">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:10px;min-width:0">
-      <button class="btn-icon mobile-toggle" onclick="openSidebar()">☰</button>
-      <div class="topbar-title" id="topbarTitle">仪表盘</div>
-    </div>
+    <div style="display:flex;align-items:center;gap:10px;min-width:0"><button class="btn-icon mobile-toggle" onclick="openSidebar()">☰</button><div class="topbar-title" id="topbarTitle">仪表盘</div></div>
     <div class="topbar-actions">
       <button class="btn btn-sm btn-secondary" onclick="exportAllData()">📥<span class="btn-label">导出</span></button>
       <button class="btn btn-sm btn-secondary" onclick="el('importFile').click()">📤<span class="btn-label">导入</span></button>
@@ -287,14 +283,8 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
     <div class="glass stat-card glass-card-sm" data-color="secondary"><div class="stat-icon">✅</div><div class="stat-value" id="statAccuracy">0%</div><div class="stat-label">正确率</div></div>
     <div class="glass stat-card glass-card-sm" data-color="warn"><div class="stat-icon">❌</div><div class="stat-value" id="statWrong">0</div><div class="stat-label">错题数</div></div>
   </div>
-  <div class="grid-2-1 gap-20">
-    <div class="glass glass-card"><h3 style="font-size:.95rem;margin-bottom:14px">趋势</h3><div class="chart-container"><canvas id="trendChart"></canvas></div></div>
-    <div class="glass glass-card"><h3 style="font-size:.95rem;margin-bottom:14px">题型</h3><div class="chart-container"><canvas id="typeChart"></canvas></div></div>
-  </div>
-  <div class="grid-2 gap-20" style="margin-top:20px">
-    <div class="glass glass-card"><h3 style="font-size:.95rem;margin-bottom:14px">难度</h3><div class="chart-container"><canvas id="diffChart"></canvas></div></div>
-    <div class="glass glass-card"><h3 style="font-size:.95rem;margin-bottom:14px">活动</h3><div id="recentActivity" style="max-height:200px;overflow-y:auto"></div></div>
-  </div>
+  <div class="grid-2-1 gap-20"><div class="glass glass-card"><h3 style="font-size:.95rem;margin-bottom:14px">趋势</h3><div class="chart-container"><canvas id="trendChart"></canvas></div></div><div class="glass glass-card"><h3 style="font-size:.95rem;margin-bottom:14px">题型</h3><div class="chart-container"><canvas id="typeChart"></canvas></div></div></div>
+  <div class="grid-2 gap-20" style="margin-top:20px"><div class="glass glass-card"><h3 style="font-size:.95rem;margin-bottom:14px">难度</h3><div class="chart-container"><canvas id="diffChart"></canvas></div></div><div class="glass glass-card"><h3 style="font-size:.95rem;margin-bottom:14px">活动</h3><div id="recentActivity" style="max-height:200px;overflow-y:auto"></div></div></div>
 </div>
 
 <div class="view" id="view-api-config">
@@ -306,14 +296,26 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
 
 <div class="view" id="view-settings">
   <div class="grid-2 gap-20">
-    <div class="glass glass-card">
-      <h3 style="font-size:.95rem;margin-bottom:18px">生成设置</h3>
-      <div class="form-group"><label class="form-label">默认生成 API</label><select class="form-select" id="settingGenApi"></select></div>
-      <div class="form-group"><label class="form-label">默认作答 API</label><select class="form-select" id="settingAnsApi"></select></div>
-      <div class="form-group"><label class="form-label">请求间隔 (ms)</label><input type="number" class="form-input" id="settingInterval" value="1000" min="200"></div>
-      <div class="form-group"><label class="form-label">单次最大生成数</label><input type="number" class="form-input" id="settingMaxBatch" value="20" min="1" max="100"></div>
-      <div class="form-group"><label class="form-label">自动保存间隔 (秒)</label><input type="number" class="form-input" id="settingAutoSave" value="30" min="5"></div>
-      <button class="btn btn-primary" onclick="saveSettings()">保存</button>
+    <div class="flex-col gap-20">
+      <div class="glass glass-card">
+        <h3 style="font-size:.95rem;margin-bottom:18px">生成设置</h3>
+        <div class="form-group"><label class="form-label">默认生成 API</label><select class="form-select" id="settingGenApi"></select></div>
+        <div class="form-group"><label class="form-label">默认作答 API</label><select class="form-select" id="settingAnsApi"></select></div>
+        <div class="form-group"><label class="form-label">请求间隔 (ms)</label><input type="number" class="form-input" id="settingInterval" value="1000" min="200"></div>
+        <div class="form-group"><label class="form-label">单次最大生成数</label><input type="number" class="form-input" id="settingMaxBatch" value="20" min="1" max="100"></div>
+        <div class="form-group"><label class="form-label">自动保存间隔 (秒)</label><input type="number" class="form-input" id="settingAutoSave" value="30" min="5"></div>
+        <button class="btn btn-primary" onclick="saveSettings()">保存</button>
+      </div>
+      <div class="glass glass-card">
+        <h3 style="font-size:.95rem;margin-bottom:18px">🔐 PIN 安全锁</h3>
+        <p style="font-size:.82rem;color:var(--text-secondary);margin-bottom:14px">开启后每次打开页面需输入PIN。</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:.88rem">启用 PIN</span><div class="toggle" id="pinToggle"></div></div>
+        <div id="pinSettingsArea" style="display:none">
+          <div class="form-group"><label class="form-label">PIN (4位数字)</label><input type="password" class="form-input" id="pinInput" maxlength="4" inputmode="numeric" placeholder="输入4位数字"></div>
+          <div class="form-group" id="pinConfirmGroup"><label class="form-label">确认 PIN</label><input type="password" class="form-input" id="pinConfirm" maxlength="4" inputmode="numeric" placeholder="再次输入"></div>
+          <div class="btn-group"><button class="btn btn-primary btn-sm" id="savePinBtn">设置 PIN</button><button class="btn btn-danger btn-sm" id="disablePinBtn" style="display:none">关闭 PIN</button></div>
+        </div>
+      </div>
     </div>
     <div class="flex-col gap-20">
       <div class="glass glass-card">
@@ -323,20 +325,10 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
         <button class="btn btn-primary" onclick="saveSettings()">保存</button>
       </div>
       <div class="glass glass-card">
-        <h3 style="font-size:.95rem;margin-bottom:18px">🔐 PIN 安全锁</h3>
-        <p style="font-size:.82rem;color:var(--text-secondary);margin-bottom:14px">开启后每次打开页面需输入PIN。</p>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <span style="font-size:.88rem">启用 PIN</span>
-          <div class="toggle" id="pinToggle"></div>
-        </div>
-        <div id="pinSettingsArea" style="display:none">
-          <div class="form-group"><label class="form-label">PIN (4位数字)</label><input type="password" class="form-input" id="pinInput" maxlength="4" inputmode="numeric" placeholder="输入4位数字"></div>
-          <div class="form-group" id="pinConfirmGroup"><label class="form-label">确认 PIN</label><input type="password" class="form-input" id="pinConfirm" maxlength="4" inputmode="numeric" placeholder="再次输入"></div>
-          <div class="btn-group">
-            <button class="btn btn-primary btn-sm" id="savePinBtn">设置 PIN</button>
-            <button class="btn btn-danger btn-sm" id="disablePinBtn" style="display:none">关闭 PIN</button>
-          </div>
-        </div>
+        <h3 style="font-size:.95rem;margin-bottom:18px">实验功能</h3>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div><span style="font-size:.88rem">自动AI生成解析</span><span class="beta-tag">BETA</span><div class="form-hint">手动上传题目时，无解析则自动生成</div></div><div class="toggle" id="autoExplainToggle"></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div><span style="font-size:.88rem">显示DCR专题预设</span><div class="form-hint">出题页面显示DCR教程/规定主题</div></div><div class="toggle" id="dcrPresetToggle"></div></div>
+        <button class="btn btn-primary" onclick="saveSettings()">保存</button>
       </div>
     </div>
   </div>
@@ -348,18 +340,12 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
       <div class="glass glass-card">
         <h3 style="font-size:.95rem;margin-bottom:18px">题目生成</h3>
         <div class="form-group"><label class="form-label">API</label><select class="form-select" id="genApi"></select></div>
-        <div class="form-group"><label class="form-label">主题</label><input type="text" class="form-input" id="genTopic" placeholder="如：JavaScript 基础..."></div>
+        <div class="form-group"><label class="form-label">出题主题</label><select class="form-select" id="genTopicPreset" onchange="handleTopicPreset()"></select></div>
+        <div class="form-group" id="genTopicCustomGroup"><label class="form-label">自定义主题</label><input type="text" class="form-input" id="genTopic" placeholder="如：JavaScript 基础、网络协议..."></div>
         <div class="form-row"><div class="form-group"><label class="form-label">数量</label><input type="number" class="form-input" id="genCount" value="5" min="1" max="50"></div><div class="form-group"><label class="form-label">难度</label><select class="form-select" id="genDifficulty"><option value="mixed">混合</option><option value="easy">简单</option><option value="medium">中等</option><option value="hard">困难</option></select></div></div>
-        <div class="form-group"><label class="form-label">题型（可多选）</label>
-          <div class="checkbox-group" id="genTypes">
-            <label class="checkbox-item"><input type="checkbox" value="choice" checked><span>单选题</span></label>
-            <label class="checkbox-item"><input type="checkbox" value="choice-multi"><span>多选题</span></label>
-            <label class="checkbox-item"><input type="checkbox" value="judge"><span>判断题</span></label>
-            <label class="checkbox-item"><input type="checkbox" value="fill"><span>填空题</span></label>
-            <label class="checkbox-item"><input type="checkbox" value="essay"><span>简答题</span></label>
-          </div>
-        </div>
-        <div class="form-group"><label class="form-label">模板</label><select class="form-select" id="genTemplate" onchange="applyTemplate()"><option value="custom">自定义</option><option value="exam">考试</option><option value="practice">练习</option><option value="interview">面试</option><option value="competition">竞赛</option></select></div>
+        <div class="form-group"><label class="form-label">题型（可多选）</label><div class="checkbox-group" id="genTypes"><label class="checkbox-item"><input type="checkbox" value="choice" checked><span>单选题</span></label><label class="checkbox-item"><input type="checkbox" value="choice-multi"><span>多选题</span></label><label class="checkbox-item"><input type="checkbox" value="judge"><span>判断题</span></label><label class="checkbox-item"><input type="checkbox" value="fill"><span>填空题</span></label><label class="checkbox-item"><input type="checkbox" value="essay"><span>简答题</span></label></div></div>
+        <div class="form-group"><label class="form-label">风格模板</label><select class="form-select" id="genTemplate" onchange="applyTemplate()"><option value="custom">自定义</option><option value="exam">考试</option><option value="practice">练习</option><option value="interview">面试</option><option value="competition">竞赛</option></select></div>
+        <div class="form-group"><label class="form-label">出题范例（可选）</label><textarea class="form-textarea" id="genExample" rows="2" placeholder='粘贴一道示例题目，AI参考其格式和风格'></textarea><div class="form-hint">提供范例可让AI更精准地按照你需要的格式和难度出题</div></div>
         <div class="form-group"><label class="form-label">补充要求</label><textarea class="form-textarea" id="genPrompt" rows="3"></textarea></div>
         <button class="btn btn-primary" style="width:100%" onclick="startGeneration()" id="genBtn">✨ 开始生成</button>
       </div>
@@ -378,17 +364,41 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
     <div class="tabs"><div class="tab active" data-tab="single" onclick="switchUploadTab('single')">单个上传</div><div class="tab" data-tab="batch" onclick="switchUploadTab('batch')">批量上传</div></div>
     <div id="uploadSingle">
       <div class="form-group"><label class="form-label">题目内容 *</label><textarea class="form-textarea" id="uploadSingleContent" rows="3"></textarea></div>
-      <div class="form-row"><div class="form-group"><label class="form-label">类型</label><select class="form-select" id="uploadSingleType"><option value="choice">单选题</option><option value="choice-multi">多选题</option><option value="judge">判断题</option><option value="fill">填空题</option><option value="essay">简答题</option></select></div><div class="form-group"><label class="form-label">难度</label><select class="form-select" id="uploadSingleDiff"><option value="easy">简单</option><option value="medium">中等</option><option value="hard">困难</option></select></div></div>
-      <div class="form-group"><label class="form-label">选项（每行一个）</label><textarea class="form-textarea" id="uploadSingleOptions" rows="3" placeholder="A. 选项1&#10;B. 选项2"></textarea></div>
-      <div class="form-group"><label class="form-label">正确答案 *（多选用逗号分隔如 A,B,D）</label><input type="text" class="form-input" id="uploadSingleAnswer"></div>
-      <div class="form-group"><label class="form-label">解析</label><textarea class="form-textarea" id="uploadSingleExplanation" rows="2"></textarea></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">类型</label><select class="form-select" id="uploadSingleType" onchange="handleUploadTypeChange()"><option value="choice">单选题</option><option value="choice-multi">多选题</option><option value="judge">判断题</option><option value="fill">填空题</option><option value="essay">简答题</option></select></div><div class="form-group"><label class="form-label">难度</label><select class="form-select" id="uploadSingleDiff"><option value="easy">简单</option><option value="medium">中等</option><option value="hard">困难</option></select></div></div>
+      <div class="form-group" id="uploadOptionsGroup"><label class="form-label">选项（每行一个）</label><textarea class="form-textarea" id="uploadSingleOptions" rows="3" placeholder="A. 选项1&#10;B. 选项2"></textarea></div>
+      <div class="form-group"><label class="form-label" id="uploadAnswerLabel">正确答案 *</label><input type="text" class="form-input" id="uploadSingleAnswer"><div class="form-hint" id="uploadAnswerHint">选择题填字母(A/B/C/D)，多选用逗号分隔(A,B,D)。</div></div>
+      <div class="form-group"><label class="form-label">解析（可选，留空可自动生成）</label><textarea class="form-textarea" id="uploadSingleExplanation" rows="2"></textarea></div>
       <div class="form-group"><label class="form-label">标签</label><input type="text" class="form-input" id="uploadSingleTopic" placeholder="如：数学"></div>
       <div class="btn-group"><button class="btn btn-primary" onclick="addSingleQuestion()">📥 添加</button><button class="btn btn-secondary" onclick="addSingleAndAnswer()">🤖 添加并AI作答</button></div>
     </div>
     <div id="uploadBatch" style="display:none">
-      <div class="form-group"><label class="form-label">批量输入（每行一题 或 JSON）</label><textarea class="form-textarea" id="uploadBatchText" rows="8"></textarea></div>
-      <div class="form-group"><label class="form-label">或导入 JSON</label><input type="file" class="form-input" id="uploadBatchFile" accept=".json" onchange="handleBatchFile(event)" style="padding:8px"></div>
-      <div class="btn-group"><button class="btn btn-primary" onclick="addBatchQuestions()">📥 批量添加</button><button class="btn btn-secondary" onclick="addBatchAndAnswer()">🤖 添加并AI作答</button></div>
+      <div class="form-group"><label class="form-label">格式说明</label>
+        <div style="margin-bottom:12px">
+          <p style="font-size:.82rem;color:var(--text-secondary);margin-bottom:8px"><strong>方式一：JSON 数组</strong>（推荐，支持全部字段）</p>
+          <div class="format-box">[
+  {
+    "content": "题目内容（必填）",
+    "type": "choice",
+    "difficulty": "medium",
+    "options": ["A. 选项1", "B. 选项2", "C. 选项3", "D. 选项4"],
+    "answer": "A",
+    "explanation": "解析说明（可选）",
+    "topic": "标签（可选）"
+  }
+]
+
+// type: choice(单选) choice-multi(多选) judge(判断) fill(填空) essay(简答)
+// difficulty: easy(简单) medium(中等) hard(困难)
+// options 仅 choice/choice-multi 需要；fill/essay 可省略</div>
+          <p style="font-size:.82rem;color:var(--text-secondary);margin:12px 0 8px"><strong>方式二：每行一题</strong>（仅题目内容）</p>
+          <div class="format-box">JavaScript中typeof null的返回值是什么？
+HTTP状态码404代表什么含义？</div>
+          <p style="font-size:.7rem;color:var(--text-dim);margin-top:6px">每行一题：默认choice类型、medium难度，答案和选项需后续编辑。</p>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">粘贴内容</label><textarea class="form-textarea" id="uploadBatchText" rows="6"></textarea></div>
+      <div class="form-group"><label class="form-label">或导入 JSON 文件</label><input type="file" class="form-input" id="uploadBatchFile" accept=".json" onchange="handleBatchFile(event)" style="padding:8px"></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addBatchQuestions()">📥 批量添加</button><button class="btn btn-secondary" onclick="addBatchAndAnswer()">🤖 批量添加并AI作答</button></div>
     </div>
   </div>
   <div class="glass glass-card"><h3 style="font-size:.95rem;margin-bottom:14px">最近上传</h3><div id="uploadRecent" class="flex-col gap-8" style="max-height:300px;overflow-y:auto"><div class="empty-state"><div class="empty-icon">📤</div><div class="empty-text">暂无</div></div></div></div>
@@ -402,6 +412,10 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
         <div class="form-row"><div class="form-group"><label class="form-label">API</label><select class="form-select" id="ansApi"></select></div><div class="form-group"><label class="form-label">策略</label><select class="form-select" id="ansStrategy"><option value="direct">直接</option><option value="cot">推理</option><option value="careful">审慎</option></select></div></div>
         <div class="form-group"><label class="form-label">范围</label><select class="form-select" id="ansScope"><option value="unanswered">未答题</option><option value="recent">最近生成</option><option value="wrong-review">错题重做</option><option value="all">全部</option></select></div>
         <div class="form-group"><label class="form-label">温度</label><input type="range" id="ansTemp" min="0" max="1" step="0.05" value="0.3"><div class="form-hint" id="ansTempVal">0.3</div></div>
+        <div class="glass glass-card-sm" style="background:var(--warn-dim);border-color:rgba(245,158,11,0.2);margin-bottom:16px">
+          <p style="font-size:.78rem;color:var(--warn);font-weight:600;margin-bottom:4px">📋 简答题AI评分标准</p>
+          <p style="font-size:.75rem;color:var(--text-secondary);line-height:1.6">总分100分，≥60分判定正确：<br>• 核心要点覆盖（40分）• 逻辑与条理（25分）• 准确性（20分）• 完整性（15分）</p>
+        </div>
         <button class="btn btn-primary" style="width:100%" onclick="startAnswering()" id="ansBtn">🤖 开始作答</button>
       </div>
       <div class="glass glass-card" id="ansProgressCard" style="display:none">
@@ -465,10 +479,11 @@ tbody tr:hover{background:rgba(255,255,255,0.02)}
 
 <script>
 const DEFAULT_STATE={apiConfigs:[],questions:[],answers:[],wrongQuestions:[],logs:[],
-  settings:{genApiId:'',ansApiId:'',interval:1000,maxBatch:20,autoSave:30,judgeMode:'ai',judgeTemp:0.1,passThreshold:60,judgePrompt:'',pinEnabled:false,pinCode:'',onboarded:false},
+  settings:{genApiId:'',ansApiId:'',interval:1000,maxBatch:20,autoSave:30,judgeMode:'ai',judgeTemp:0.1,passThreshold:60,pinEnabled:false,pinCode:'',onboarded:false,autoExplain:false,showDcrPresets:false},
   stats:{totalGenerated:0,totalAnswered:0,totalCorrect:0,totalWrong:0,history:[]}};
 let state=JSON.parse(JSON.stringify(DEFAULT_STATE)),workflowRunning=false,workflowAbort=false;
 const $=id=>document.getElementById(id);
+const el=id=>document.getElementById(id);
 function loadState(){try{const s=localStorage.getItem('questflow_state');if(s)state={...JSON.parse(JSON.stringify(DEFAULT_STATE)),...JSON.parse(s)};}catch(e){}}
 function saveState(){try{localStorage.setItem('questflow_state',JSON.stringify(state));}catch(e){}}
 function addLog(level,msg){state.logs.unshift({id:Date.now()+Math.random(),timestamp:new Date().toISOString(),level,message:msg});if(state.logs.length>500)state.logs.length=500;}
@@ -479,198 +494,48 @@ function recordHistory(type,count){const today=new Date().toISOString().slice(0,
 const TL={choice:'单选题','choice-multi':'多选题',judge:'判断题',fill:'填空题',essay:'简答题'};
 const TS={choice:'单选','choice-multi':'多选',judge:'判断',fill:'填空',essay:'简答'};
 const DL={easy:'简单',medium:'中等',hard:'困难',mixed:'混合'};
-
 const VT={'dashboard':'仪表盘','api-config':'API 配置','settings':'系统设置','generate':'题目生成','upload':'手动上传','answer':'自动作答','workflow':'工作流','questions':'题库管理','wrong':'错题本','logs':'操作日志'};
 const BM={dashboard:0,generate:1,answer:2,questions:3};
 function openSidebar(){$('sidebar').classList.add('open');$('sidebarOverlay').classList.add('show');}
 function closeSidebar(){$('sidebar').classList.remove('open');$('sidebarOverlay').classList.remove('show');}
-function navigateTo(v){
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const si=document.querySelector(`.nav-item[data-view="${v}"]`);if(si)si.classList.add('active');
-  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
-  const ve=$('view-'+v);if(ve)ve.classList.add('active');
-  $('topbarTitle').textContent=VT[v]||'';closeSidebar();
-  document.querySelectorAll('.bottomnav-item').forEach(b=>b.classList.remove('active'));
-  const bi=BM[v];if(bi!==undefined)document.querySelectorAll('.bottomnav-item')[bi]?.classList.add('active');
-  if(v==='dashboard')refreshDashboard();if(v==='api-config')refreshApiSelects();if(v==='settings')refreshSettings();
-  if(v==='generate')refreshGenApiSelect();if(v==='answer')refreshAnsApiSelect();
-  if(v==='questions')renderQuestions();if(v==='wrong')renderWrongQuestions();if(v==='logs')renderLogs();if(v==='upload')renderUploadRecent();
-}
+function navigateTo(v){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));const si=document.querySelector(`.nav-item[data-view="${v}"]`);if(si)si.classList.add('active');document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));const ve=$('view-'+v);if(ve)ve.classList.add('active');$('topbarTitle').textContent=VT[v]||'';closeSidebar();document.querySelectorAll('.bottomnav-item').forEach(b=>b.classList.remove('active'));const bi=BM[v];if(bi!==undefined)document.querySelectorAll('.bottomnav-item')[bi]?.classList.add('active');if(v==='dashboard')refreshDashboard();if(v==='api-config')refreshApiSelects();if(v==='settings')refreshSettings();if(v==='generate'){refreshGenApiSelect();updateGenTopicPreset();}if(v==='answer')refreshAnsApiSelect();if(v==='questions')renderQuestions();if(v==='wrong')renderWrongQuestions();if(v==='logs')renderLogs();if(v==='upload'){renderUploadRecent();handleUploadTypeChange();}}
 document.querySelectorAll('.nav-item[data-view]').forEach(item=>{item.addEventListener('click',()=>navigateTo(item.dataset.view));});
 document.querySelectorAll('.bottomnav-item[data-view]').forEach(item=>{item.addEventListener('click',()=>navigateTo(item.dataset.view));});
 $('bnavMore')?.addEventListener('click',openSidebar);
 $('sidebarOverlay').addEventListener('click',closeSidebar);
 function openModal(id){$(id).classList.add('show');}function closeModal(id){$(id).classList.remove('show');}
 
-// ===== PIN =====
-function checkPinOnLoad(){
-  if(state.settings.pinEnabled&&state.settings.pinCode&&!sessionStorage.getItem('pin_verified')){
-    $('pinOverlay').style.display='';setTimeout(()=>$('pin0').focus(),150);return true;}return false;}
-function verifyPin(){
-  const v=[0,1,2,3].map(i=>$('pin'+i).value).join('');
-  if(v.length<4){$('pinError').textContent='请输入完整4位PIN';return;}
-  if(v===state.settings.pinCode){sessionStorage.setItem('pin_verified','1');$('pinOverlay').style.display='none';$('pinError').textContent='';[0,1,2,3].forEach(i=>$('pin'+i).value='');afterUnlock();
-  }else{$('pinError').textContent='PIN 错误，请重试';[0,1,2,3].forEach(i=>$('pin'+i).value='');$('pin0').focus();}}
+// PIN
+function checkPinOnLoad(){if(state.settings.pinEnabled&&state.settings.pinCode&&!sessionStorage.getItem('pin_verified')){$('pinOverlay').style.display='';setTimeout(()=>$('pin0').focus(),150);return true;}return false;}
+function verifyPin(){const v=[0,1,2,3].map(i=>$('pin'+i).value).join('');if(v.length<4){$('pinError').textContent='请输入完整4位PIN';return;}if(v===state.settings.pinCode){sessionStorage.setItem('pin_verified','1');$('pinOverlay').style.display='none';$('pinError').textContent='';[0,1,2,3].forEach(i=>$('pin'+i).value='');afterUnlock();}else{$('pinError').textContent='PIN 错误，请重试';[0,1,2,3].forEach(i=>$('pin'+i).value='');$('pin0').focus();}}
 for(let i=0;i<4;i++){const inp=$('pin'+i);inp.addEventListener('input',function(){this.value=this.value.replace(/[^0-9]/g,'');if(this.value&&i<3)$('pin'+(i+1)).focus();if(i===3&&this.value)verifyPin();});inp.addEventListener('keydown',function(e){if(e.key==='Backspace'&&!this.value&&i>0)$('pin'+(i-1)).focus();if(e.key==='Enter')verifyPin();});}
 $('pinUnlockBtn').addEventListener('click',function(e){e.preventDefault();verifyPin();});
 function updatePinSettingsUI(){$('pinToggle').classList.toggle('on',state.settings.pinEnabled);$('pinSettingsArea').style.display='none';$('pinInput').value='';$('pinConfirm').value='';}
-$('pinToggle').addEventListener('click',function(){if(state.settings.pinEnabled){$('pinSettingsArea').style.display='';$('savePinBtn').style.display='none';$('pinConfirmGroup').style.display='none';$('disablePinBtn').style.display='';$('pinInput').placeholder='输入当前PIN以关闭';$('pinInput').value='';$('pinInput').focus();
-}else{$('pinSettingsArea').style.display='';$('savePinBtn').style.display='';$('pinConfirmGroup').style.display='';$('disablePinBtn').style.display='none';$('pinInput').placeholder='输入4位数字';$('pinInput').value='';$('pinConfirm').value='';$('pinInput').focus();}});
+$('pinToggle').addEventListener('click',function(){if(state.settings.pinEnabled){$('pinSettingsArea').style.display='';$('savePinBtn').style.display='none';$('pinConfirmGroup').style.display='none';$('disablePinBtn').style.display='';$('pinInput').placeholder='输入当前PIN以关闭';$('pinInput').value='';$('pinInput').focus();}else{$('pinSettingsArea').style.display='';$('savePinBtn').style.display='';$('pinConfirmGroup').style.display='';$('disablePinBtn').style.display='none';$('pinInput').placeholder='输入4位数字';$('pinInput').value='';$('pinConfirm').value='';$('pinInput').focus();}});
 $('savePinBtn').addEventListener('click',function(){const p=$('pinInput').value,c=$('pinConfirm').value;if(p.length!==4||!/^\d{4}$/.test(p)){showToast('PIN必须是4位数字','error');return;}if(p!==c){showToast('两次PIN不一致','error');return;}state.settings.pinEnabled=true;state.settings.pinCode=p;saveState();updatePinSettingsUI();showToast('PIN设置成功！','success');addLog('success','PIN已启用');});
 $('disablePinBtn').addEventListener('click',function(){const cur=$('pinInput').value;if(!cur){showToast('请输入当前PIN','error');return;}if(cur!==state.settings.pinCode){showToast('PIN错误','error');return;}state.settings.pinEnabled=false;state.settings.pinCode='';saveState();updatePinSettingsUI();showToast('PIN已关闭','info');addLog('info','PIN已关闭');});
 
-// ===== ONBOARDING (EXPANDED) =====
+// ONBOARDING
 let onboardStep=0;
 const OBS=[
-  {
-    icon:'👋',
-    title:'欢迎使用 QuestFlow',
-    desc:'智能题库工作流系统 —— 让 AI 帮你出题、答题、判分、归档。',
-    features:[
-      {icon:'🔑',text:'<strong>多 API 支持</strong>：兼容 OpenAI、DeepSeek、通义千问、智谱、Moonshot 等主流模型'},
-      {icon:'📝',text:'<strong>5 种题型</strong>：单选、多选、判断、填空、简答，支持难度和主题自定义'},
-      {icon:'🔄',text:'<strong>全自动闭环</strong>：一键启动「出题→答题→判分→错题归档」完整流程'},
-      {icon:'📊',text:'<strong>数据可视化</strong>：仪表盘实时展示正确率、趋势、题型分布等关键指标'}
-    ],
-    highlight:'数据保存在浏览器本地，无需登录，无需服务器'
-  },
-  {
-    icon:'🔑',
-    title:'第一步：配置 API',
-    desc:'系统通过调用 AI 大模型来生成和回答题目，需要你提供 API Key。',
-    features:[
-      {icon:'🟢',text:'<strong>选择提供商</strong>：内置 OpenAI、DeepSeek、通义千问等模板，选中后自动填充 Base URL 和模型名'},
-      {icon:'🔌',text:'<strong>自定义接入</strong>：支持任何 OpenAI 兼容接口，填入自己的 Base URL 即可'},
-      {icon:'🧪',text:'<strong>连接测试</strong>：添加后可直接测试连通性和响应质量'},
-      {icon:'💡',text:'<strong>建议配置两个</strong>：一个用于出题，一个用于答题（可用不同模型互验）'}
-    ],
-    highlight:'建议：出题用 DeepSeek / 通义千问，答题用 GPT-4o / Claude，交叉验证更准确'
-  },
-  {
-    icon:'✨',
-    title:'第二步：AI 批量出题',
-    desc:'进入「题目生成」页面，填写主题和参数，AI 会一次性生成多道题目。',
-    features:[
-      {icon:'🎯',text:'<strong>主题自定义</strong>：输入任意主题（如"Python 基础"、"数据结构"），AI 自动围绕主题出题'},
-      {icon:'📋',text:'<strong>题型可多选</strong>：单选、多选、判断、填空、简答可自由组合，系统按比例分配'},
-      {icon:'📶',text:'<strong>难度三档</strong>：简单（基础记忆）、中等（理解应用）、困难（深入分析），可选混合'},
-      {icon:'📄',text:'<strong>预设模板</strong>：考试、练习、面试、竞赛四种模板一键切换出题风格'}
-    ],
-    highlight:'生成后自动校验题型和难度，不符要求的题目会被过滤掉'
-  },
-  {
-    icon:'📤',
-    title:'第二步（备选）：手动上传',
-    desc:'如果你有自己的题库，可以通过「手动上传」页面导入系统。',
-    features:[
-      {icon:'📝',text:'<strong>单个上传</strong>：逐题填写内容、选项、答案、解析，精确控制每道题的细节'},
-      {icon:'📦',text:'<strong>批量上传</strong>：粘贴 JSON 格式或逐行输入，一次导入大量题目'},
-      {icon:'📁',text:'<strong>文件导入</strong>：直接拖入 .json 文件，自动解析并预览'},
-      {icon:'🤖',text:'<strong>上传即作答</strong>：点击「添加并AI作答」，上传后自动跳转答题页面'}
-    ],
-    highlight:'手动上传的题目同样支持 AI 自动作答和判分'
-  },
-  {
-    icon:'🤖',
-    title:'第三步：AI 自动作答',
-    desc:'进入「自动作答」页面，让另一个 AI 模型来回答题库中的题目。',
-    features:[
-      {icon:'🧠',text:'<strong>三种策略</strong>：「直接」快速作答、「推理」分步思考、「审慎」用排除法'},
-      {icon:'🎯',text:'<strong>范围控制</strong>：可选未答题、最近生成、错题重做或全部重答'},
-      {icon:'🌡️',text:'<strong>温度调节</strong>：低温度更稳定，高温度更有创造性，按需调节'},
-      {icon:'✅',text:'<strong>自动判分</strong>：作答完成后自动比对正确答案，错题自动归入错题本'}
-    ],
-    highlight:'多选题自动对比所有选项，判断题智能识别"正确/错误"多种表述'
-  },
-  {
-    icon:'🔄',
-    title:'第四步：一键工作流',
-    desc:'「工作流控制」页面可一键串联全部流程，无需手动切换页面。',
-    features:[
-      {icon:'⚡',text:'<strong>全自动模式</strong>：启动后自动完成「生成→作答→判分→归档」，全程无人值守'},
-      {icon:'👆',text:'<strong>手动模式</strong>：每步完成后暂停，等你确认再继续，适合需要检查中间结果的场景'},
-      {icon:'📋',text:'<strong>实时日志</strong>：每个步骤的状态、时间、结果都会记录在右侧日志面板'},
-      {icon:'⏹',text:'<strong>随时停止</strong>：点击「停止」按钮可随时中断，已生成的数据不会丢失'}
-    ],
-    highlight:'推荐日常使用：设好主题和数量 → 一键启动 → 喝杯咖啡 → 回来看结果'
-  },
-  {
-    icon:'📊',
-    title:'数据管理与安全',
-    desc:'所有数据都存储在浏览器本地，支持导出备份和 PIN 安全锁。',
-    features:[
-      {icon:'❌',text:'<strong>错题本</strong>：作答错误的题目自动归档，支持搜索、筛选、重做和导出'},
-      {icon:'📥',text:'<strong>数据导出</strong>：一键导出全部数据（题目、答案、配置）为 JSON 文件备份'},
-      {icon:'📤',text:'<strong>数据导入</strong>：从备份文件恢复数据，或从其他系统迁移题库'},
-      {icon:'🔐',text:'<strong>PIN 安全锁</strong>：在「系统设置」中开启，每次打开页面需输入 4 位数字密码'}
-    ],
-    highlight:'建议定期导出备份，清空数据前会二次确认'
-  }
+  {icon:'👋',title:'欢迎使用 QuestFlow',desc:'智能题库工作流系统，让 AI 帮你出题、答题、判分、归档。',features:[{icon:'🔑',c:'green',t:'多 API 支持',s:'兼容 OpenAI、DeepSeek、通义千问等主流模型'},{icon:'📝',c:'blue',t:'5 种题型',s:'单选、多选、判断、填空、简答，难度自由组合'},{icon:'🔄',c:'purple',t:'全自动闭环',s:'一键启动出题→答题→判分→错题归档'}],highlight:'所有数据保存在浏览器本地，无需登录，无需服务器'},
+  {icon:'🔑',title:'配置 AI 服务',desc:'系统通过 AI 大模型来生成和回答题目，你需要先配置至少一个 API Key。',features:[{icon:'🟢',c:'green',t:'内置模板',s:'选择提供商后自动填充地址和模型名'},{icon:'🔌',c:'blue',t:'自定义接入',s:'支持任何 OpenAI 兼容接口'},{icon:'🧪',c:'purple',t:'连接测试',s:'添加后可直接测试连通性'}],highlight:'建议配置两个 API：一个出题，一个答题，可用不同模型交叉验证'},
+  {icon:'✨',title:'AI 批量出题',desc:'填写主题和参数，AI 一次性生成多道题目。',features:[{icon:'🎯',c:'green',t:'主题自定义',s:'输入任意主题，AI 围绕主题出题'},{icon:'📋',c:'blue',t:'题型多选',s:'五种题型自由组合，按比例分配'},{icon:'📄',c:'orange',t:'出题范例',s:'粘贴示例题目，AI 参考其格式和风格'}],highlight:'支持风格模板（考试/练习/面试/竞赛），与主题叠加使用'},
+  {icon:'📤',title:'手动上传题目',desc:'如果已有题库，可直接导入系统。',features:[{icon:'📝',c:'green',t:'单个/批量上传',s:'逐题填写或 JSON 一键导入'},{icon:'🤖',c:'blue',t:'AI 自动生成解析',s:'开启后上传无解析的题目会自动补全（Beta）'},{icon:'📋',c:'purple',t:'格式灵活',s:'判断/填空/简答无需填选项，自动适配'}],highlight:'简答题 AI 按「要点覆盖·逻辑·准确·完整」四项百分制评分'},
+  {icon:'🤖',title:'AI 自动作答',desc:'让另一个 AI 模型来回答题库中的题目，自动判分。',features:[{icon:'🧠',c:'green',t:'三种策略',s:'直接作答、分步推理、审慎排除法'},{icon:'🎯',c:'blue',t:'范围控制',s:'未答题、最近生成、错题重做或全部'},{icon:'✅',c:'purple',t:'结果可点击',s:'点击作答结果可查看题目详情'}],highlight:'多选题自动对比所有选项，判断题智能识别多种表述'},
+  {icon:'🔄',title:'一键工作流',desc:'串联全部流程，无需手动切换页面。',features:[{icon:'⚡',c:'green',t:'全自动模式',s:'启动后自动完成全部流程，无需值守'},{icon:'👆',c:'blue',t:'手动模式',s:'每步暂停等确认，适合检查中间结果'}],highlight:'推荐：设好主题和数量 → 一键启动 → 喝杯咖啡 → 看结果'},
+  {icon:'📊',title:'数据管理与安全',desc:'所有数据存储在浏览器本地，安全可控。',features:[{icon:'❌',c:'orange',t:'错题本',s:'错题自动归档，支持搜索、筛选、重做'},{icon:'📥',c:'green',t:'导入/导出',s:'一键 JSON 备份，随时恢复迁移'},{icon:'🔐',c:'blue',t:'PIN 安全锁',s:'4 位数字密码保护你的数据'}],highlight:''}
 ];
-
-function showOnboarding(){
-  $('onboardOverlay').style.display='flex';
-  onboardStep=0;
-  // Build dots
-  const dots=$('onboardDots');
-  dots.innerHTML=OBS.map((_,i)=>`<div class="onboard-dot${i===0?' active':''}" data-step="${i}"></div>`).join('');
-  dots.querySelectorAll('.onboard-dot').forEach(d=>{d.addEventListener('click',()=>{onboardStep=parseInt(d.dataset.step);renderOnboardStep();});});
-  renderOnboardStep();
-}
-
-function renderOnboardStep(){
-  const s=OBS[onboardStep];
-  let html=`<h3>${s.icon} ${s.title}</h3>`;
-  html+=`<p class="ob-desc">${s.desc}</p>`;
-  if(s.features&&s.features.length){
-    html+=`<div class="ob-features">`;
-    s.features.forEach(f=>{
-      html+=`<div class="ob-feat"><span class="ob-feat-icon">${f.icon}</span><div class="ob-feat-text">${f.text}</div></div>`;
-    });
-    html+=`</div>`;
-  }
-  if(s.highlight){
-    html+=`<div class="ob-highlight">💡 ${s.highlight}</div>`;
-  }
-  // Add flow diagram on last step
-  if(onboardStep===OBS.length-1){
-    html+=`<div class="ob-flow"><span class="ob-flow-step">配置API</span><span class="ob-flow-arrow">→</span><span class="ob-flow-step">生成题目</span><span class="ob-flow-arrow">→</span><span class="ob-flow-step">AI作答</span><span class="ob-flow-arrow">→</span><span class="ob-flow-step">自动判分</span><span class="ob-flow-arrow">→</span><span class="ob-flow-step">错题归档</span></div>`;
-  }
-  $('onboardBody').innerHTML=html;
-
-  // Update buttons
-  $('onboardNext').textContent=onboardStep===OBS.length-1?'开始使用':'下一步';
-  $('onboardSkip').style.display=onboardStep===OBS.length-1?'none':'';
-
-  // Update dots
-  const dots=$('onboardDots').children;
-  for(let i=0;i<dots.length;i++){
-    dots[i].className='onboard-dot'+(i===onboardStep?' active':(i<onboardStep?' done':''));
-  }
-
-  // Scroll to top of body
-  $('onboardBody').scrollTop=0;
-}
-
-function nextOnboardStep(){
-  if(onboardStep>=OBS.length-1){closeOnboarding();return;}
-  onboardStep++;renderOnboardStep();
-}
-function closeOnboarding(){
-  $('onboardOverlay').style.display='none';
-  sessionStorage.setItem('onboard_done','1');
-  state.settings.onboarded=true;saveState();
-}
+function showOnboarding(){$('onboardOverlay').style.display='flex';onboardStep=0;renderOnboardStep();}
+function renderOnboardStep(){const s=OBS[onboardStep];const c=$('onboardContent');let h=`<div class="onboard-body"><div class="onboard-icon-wrap">${s.icon}</div><div class="onboard-headline">${s.title}</div><div class="onboard-desc">${s.desc}</div>`;if(s.features?.length){h+=`<div class="onboard-features">`;s.features.forEach(f=>{h+=`<div class="onboard-feat"><div class="onboard-feat-circle ${f.c}">${f.icon}</div><div class="onboard-feat-content"><div class="onboard-feat-title">${f.t}</div><div class="onboard-feat-sub">${f.s}</div></div></div>`;});h+=`</div>`;}if(s.highlight)h+=`<div class="onboard-highlight"><div class="onboard-highlight-text"><span class="hl-icon">💡</span><span>${s.highlight}</span></div></div>`;if(onboardStep===OBS.length-1)h+=`<div class="onboard-flow"><span class="onboard-flow-chip">配置API</span><span class="onboard-flow-arrow">→</span><span class="onboard-flow-chip">生成题目</span><span class="onboard-flow-arrow">→</span><span class="onboard-flow-chip">AI作答</span><span class="onboard-flow-arrow">→</span><span class="onboard-flow-chip">自动判分</span><span class="onboard-flow-arrow">→</span><span class="onboard-flow-chip">错题归档</span></div>`;h+=`</div>`;c.innerHTML=h;$('onboardPages').innerHTML=OBS.map((_,i)=>`<div class="onboard-page${i===onboardStep?' active':(i<onboardStep?' done':'')}"></div>`).join('');$('onboardNext').textContent=onboardStep===OBS.length-1?'开始使用':'继续';$('onboardSkipBottom').style.display=onboardStep===OBS.length-1?'none':'';$('onboardSkip').style.display=onboardStep===OBS.length-1?'none':'';}
+function nextOnboardStep(){if(onboardStep>=OBS.length-1){closeOnboarding();return;}onboardStep++;renderOnboardStep();}
+function closeOnboarding(){$('onboardOverlay').style.display='none';sessionStorage.setItem('onboard_done','1');state.settings.onboarded=true;saveState();}
 $('onboardNext').addEventListener('click',nextOnboardStep);
 $('onboardSkip').addEventListener('click',closeOnboarding);
+$('onboardSkipBottom').addEventListener('click',closeOnboarding);
+function shouldShowOnboarding(){if(sessionStorage.getItem('onboard_done'))return false;if(state.questions.length===0&&state.apiConfigs.length===0)return true;return false;}
 
-function shouldShowOnboarding(){
-  if(sessionStorage.getItem('onboard_done'))return false;
-  if(state.questions.length===0&&state.apiConfigs.length===0)return true;
-  return false;
-}
-
-// ===== API PROVIDERS =====
+// API
 const PROVIDERS={openai:{name:'OpenAI',baseUrl:'https://api.openai.com/v1',model:'gpt-4o',icon:'🟢'},anthropic:{name:'Anthropic',baseUrl:'https://api.anthropic.com/v1',model:'claude-sonnet-4-20250514',icon:'🟤'},deepseek:{name:'DeepSeek',baseUrl:'https://api.deepseek.com/v1',model:'deepseek-chat',icon:'🔵'},qwen:{name:'通义千问',baseUrl:'https://dashscope.aliyuncs.com/compatible-mode/v1',model:'qwen-plus',icon:'🟣'},zhipu:{name:'智谱',baseUrl:'https://open.bigmodel.cn/api/paas/v4',model:'glm-4-flash',icon:'🔴'},moonshot:{name:'Moonshot',baseUrl:'https://api.moonshot.cn/v1',model:'moonshot-v1-8k',icon:'🌙'},custom:{name:'自定义',baseUrl:'',model:'',icon:'🔧'}};
 function updateApiProvider(){const p=PROVIDERS[$('apiProvider').value];$('apiBaseUrl').value=p.baseUrl;$('apiModel').value=p.model;}
 function showAddApiModal(){$('apiModalTitle').textContent='添加 API';$('apiEditId').value='';$('apiProvider').value='openai';$('apiName').value='';$('apiKey').value='';updateApiProvider();openModal('apiModal');}
@@ -685,49 +550,129 @@ function refreshAnsApiSelect(){const s=$('ansApi');s.innerHTML=state.apiConfigs.
 async function callAI(apiId,messages,temperature=0.7){const cfg=state.apiConfigs.find(c=>c.id===apiId);if(!cfg)throw new Error('API不存在');const headers={'Content-Type':'application/json'};let url=cfg.baseUrl.replace(/\/+$/,'');let body;if(cfg.provider==='anthropic'){headers['x-api-key']=cfg.apiKey;headers['anthropic-version']='2023-06-01';headers['anthropic-dangerous-direct-browser-access']='true';url+='/messages';body={model:cfg.model,max_tokens:8192,temperature,messages:messages.map(m=>({role:m.role==='system'?'user':m.role,content:m.content}))};}else{headers['Authorization']=`Bearer ${cfg.apiKey}`;url+='/chat/completions';body={model:cfg.model,messages,temperature,max_tokens:8192};}const res=await fetch(url,{method:'POST',headers,body:JSON.stringify(body)});if(!res.ok)throw new Error(`API错误(${res.status}): ${(await res.text()).slice(0,200)}`);const data=await res.json();return cfg.provider==='anthropic'?(data.content?.[0]?.text||''):(data.choices?.[0]?.message?.content||'');}
 async function testApiConnection(){const aid=$('testApiSelect').value;if(!aid){showToast('选择API','warning');return;}$('testResult').style.display='';$('testResultContent').innerHTML='<div style="display:flex;align-items:center;gap:8px"><div class="spinner"></div>测试中...</div>';try{const r=await callAI(aid,[{role:'user',content:$('testPrompt').value}],0.3);$('testResultContent').innerHTML=`<div style="color:var(--accent);font-weight:600;margin-bottom:8px">✓ 成功</div><div>${esc(r)}</div>`;}catch(e){$('testResultContent').innerHTML=`<div style="color:var(--danger);font-weight:600;margin-bottom:8px">✕ 失败</div><div>${esc(e.message)}</div>`;}}
 function robustParseJsonArray(raw){let cleaned=raw;const md=raw.match(/```(?:json)?\s*\n?([\s\S]*?)```/);if(md)cleaned=md[1].trim();const fi=cleaned.indexOf('[');if(fi===-1)throw new Error('未找到JSON数组');let c=cleaned.slice(fi);try{const r=JSON.parse(c);if(Array.isArray(r))return r;}catch(e){}const lb=c.lastIndexOf('}');if(lb!==-1){let t=c.slice(0,lb+1);let ob=0;for(const ch of t){if(ch==='[')ob++;if(ch===']')ob--;}if(ob>0)t+=']'.repeat(ob);try{const r=JSON.parse(t);if(Array.isArray(r))return r;}catch(e){}}const objs=[];const re=/\{[^{}]*\}/g;let m;while((m=re.exec(c))!==null){try{const o=JSON.parse(m[0]);if(o.content||o.type)objs.push(o);}catch(e){}}if(objs.length)return objs;throw new Error('无法提取题目');}
-const TEMPLATES={custom:'',exam:'考试标准，严谨规范，选项具干扰性。',practice:'练习题，注重基础，附带解析。',interview:'面试题，注重实际应用。',competition:'竞赛题，综合分析能力。'};
-function applyTemplate(){$('genPrompt').value=TEMPLATES[$('genTemplate').value]||'';}
 
+// ===== TEMPLATES (ADDITIVE, with tracking) =====
+const TEMPLATES={custom:'',exam:'考试标准，严谨规范，选项具干扰性。',practice:'练习题，注重基础，附带解析。',interview:'面试题，注重实际应用。',competition:'竞赛题，综合分析能力。'};
+let currentTemplatePrompt='';
+
+function applyTemplate(){
+  const val=$('genTemplate').value;
+  const tpl=TEMPLATES[val]||'';
+  const promptEl=$('genPrompt');
+
+  // 移除上次应用的模板文本
+  if(currentTemplatePrompt){
+    let raw=promptEl.value;
+    const idx=raw.indexOf(currentTemplatePrompt);
+    if(idx!==-1){
+      raw=raw.slice(0,idx)+raw.slice(idx+currentTemplatePrompt.length);
+      // 清理多余空行
+      raw=raw.replace(/\n{3,}/g,'\n\n').replace(/^\n+|\n+$/g,'');
+    }
+    promptEl.value=raw;
+    currentTemplatePrompt='';
+  }
+
+  // 追加新模板文本
+  if(val!=='custom'&&tpl){
+    const existing=promptEl.value.trim();
+    promptEl.value=existing?existing+'\n'+tpl:tpl;
+    currentTemplatePrompt=tpl;
+  }
+}
+
+// DCR PRESETS
+const DCR_TUTORIAL_CTX=`围绕DCR学生互助教程出题。关键知识：互助指不同省份学生互相协助举报保障安全；教育局无法查省外信息；须逐级举报；禁用信访渠道；禁宣传战绩；12345可要求保密、15工作日；证据仅给省级以上部门；通话录音；找异省互助人；勿泄露个人信息；及时反馈进展。`;
+const DCR_RULES_CTX=`围绕DCR频道规定出题。关键知识：DCR是个人公益平台；禁止破坏发言秩序、扰乱审核、利用频道牟利、发布敏感内容、高风险维权、违背匿名原则、白嫖行为；A类严格禁止互助的学校；禁止信访、中式教育悲观言论、政治讨论、举报无用论；AI输出不作为唯一事实来源。`;
+
+function updateGenTopicPreset(){
+  const sel=$('genTopicPreset'),current=sel.value;
+  sel.innerHTML='<option value="custom">自定义主题</option>';
+  if(state.settings.showDcrPresets){
+    sel.innerHTML+='<option value="dcr-tutorial">DCR 互助教程</option>';
+    sel.innerHTML+='<option value="dcr-rules">DCR 频道规定</option>';
+  }
+  if([...sel.options].some(o=>o.value===current))sel.value=current;
+  else{sel.value='custom';handleTopicPreset();}
+}
+
+function handleTopicPreset(){
+  const preset=$('genTopicPreset').value;
+  if(preset==='custom'){
+    $('genTopicCustomGroup').style.display='';
+    $('genTopic').value='';
+    $('genTopic').placeholder='如：JavaScript 基础、网络协议...';
+    $('genPrompt').value='';
+    currentTemplatePrompt=''; // 全部清空，模板追踪也重置
+  }else if(preset==='dcr-tutorial'){
+    $('genTopicCustomGroup').style.display='none';
+    $('genTopic').value='DCR互助教程';
+    $('genPrompt').value=DCR_TUTORIAL_CTX;
+    currentTemplatePrompt=''; // 内容被替换，追踪重置
+  }else if(preset==='dcr-rules'){
+    $('genTopicCustomGroup').style.display='none';
+    $('genTopic').value='DCR频道规定';
+    $('genPrompt').value=DCR_RULES_CTX;
+    currentTemplatePrompt=''; // 内容被替换，追踪重置
+  }
+}
+
+// UPLOAD TYPE
+function handleUploadTypeChange(){const type=$('uploadSingleType').value;if(type==='choice'||type==='choice-multi'){$('uploadOptionsGroup').style.display='';$('uploadSingleAnswer').placeholder='单选填字母(A/B/C/D)，多选用逗号分隔(A,B,D)';}else{$('uploadOptionsGroup').style.display='none';if(type==='judge')$('uploadSingleAnswer').placeholder='输入：正确 或 错误';else if(type==='fill')$('uploadSingleAnswer').placeholder='输入填空的正确答案';else if(type==='essay')$('uploadSingleAnswer').placeholder='输入参考答案（简答题按百分制评分）';else $('uploadSingleAnswer').placeholder='';}}
+
+// AUTO EXPLANATION
+async function generateExplanation(q){try{const apiId=state.settings.genApiId||state.apiConfigs[0]?.id;if(!apiId)return;const prompt=`请为以下题目生成简明的解析（100字以内）：\n题目：${q.content}\n答案：${q.answer}\n只输出解析文字，不要其他内容。`;const explanation=await callAI(apiId,[{role:'user',content:prompt}],0.3);const target=state.questions.find(x=>x.id===q.id);if(target){target.explanation=explanation.trim();saveState();showToast('AI已生成解析','success');addLog('success','自动生成解析');}}catch(e){}}
+
+// GENERATION
 const MAX_RETRIES=3;
 async function startGeneration(){
   const apiId=$('genApi').value;if(!apiId){showToast('选择API','error');return;}
-  const topic=$('genTopic').value.trim();if(!topic){showToast('输入主题','warning');return;}
+  const topic=$('genTopic').value.trim();if(!topic){showToast('输入或选择主题','warning');return;}
   const count=parseInt($('genCount').value)||5;const diff=$('genDifficulty').value;
   const types=[...$('genTypes').querySelectorAll('input:checked')].map(c=>c.value);
   if(!types.length){showToast('至少选一种题型','warning');return;}
-  const extra=$('genPrompt').value.trim();
-  const typeReqs=types.map(t=>{if(t==='choice')return'单选题(type必须是"choice")，4个选项，answer为单个字母如"A"';if(t==='choice-multi')return'多选题(type必须是"choice-multi")，4个以上选项，answer为逗号分隔如"A,B,D"';if(t==='judge')return'判断题(type必须是"judge")，options为["正确","错误"]，answer为"正确"或"错误"';if(t==='fill')return'填空题(type必须是"fill")，content中用___标记空位';if(t==='essay')return'简答题(type必须是"essay")';}).join('；');
-  const diffText=DL[diff];const perType=Math.ceil(count/types.length);
-  const dist=types.map(t=>`• ${TL[t]}：约${perType}道`).join('\n');
+  const extra=$('genPrompt').value.trim();const example=$('genExample').value.trim();
+  const typeReqs=types.map(t=>{if(t==='choice')return'单选题(type="choice")，4个选项，answer单字母';if(t==='choice-multi')return'多选题(type="choice-multi")，4+选项，answer逗号分隔';if(t==='judge')return'判断题(type="judge")，options["正确","错误"]';if(t==='fill')return'填空题(type="fill")，无需options';if(t==='essay')return'简答题(type="essay")，无需options';}).join('；');
+  const diffText=DL[diff];const perType=Math.ceil(count/types.length);const dist=types.map(t=>`• ${TL[t]}：约${perType}道`).join('\n');
   const sp=`你是严格的题目生成专家。
 【最高优先级规则】
-1. 题型限制（绝对不能生成其他类型）：${typeReqs}
-2. difficulty必须是：${diff==='mixed'?'从easy/medium/hard中任选':'"'+diff+'"'}（easy=基础记忆, medium=理解应用, hard=深入分析）
+1. 题型限制：${typeReqs}
+2. difficulty：${diff==='mixed'?'easy/medium/hard任选':'"'+diff+'"' }
 3. 共${count}道：${dist}
-4. 只输出JSON数组，每个对象含type,content,options,answer,explanation,difficulty
+4. 只输出JSON数组，每个含type,content,options,answer,explanation,difficulty
 5. type必须是：${types.map(t=>'"'+t+'"').join(', ')}
-主题：${topic}${extra?'\n补充：'+extra:''}`;
+6. 判断题options必须["正确","错误"]；填空/简答无需options
+${example?'\n【范例】\n'+example:''}
+主题：${topic}${extra?'\n要求：'+extra:''}`;
   const btn=$('genBtn'),pc=$('genProgressCard'),pb=$('genProgressBar'),pt=$('genProgressText'),pd=$('genProgressDetail'),pv=$('genPreview');
   btn.disabled=true;btn.innerHTML='<div class="spinner"></div> 生成中...';pc.style.display='';pb.style.width='0%';pv.innerHTML='';addLog('info',`生成${count}道(${topic})`);
   let newQs=[],lastErr=null;
-  for(let att=1;att<=MAX_RETRIES;att++){try{pd.textContent=att>1?`重试${att}/${MAX_RETRIES}...`:'调用AI...';pb.style.width=`${(att-1)/MAX_RETRIES*60}%`;const resp=await callAI(apiId,[{role:'system',content:sp},{role:'user',content:`生成"${topic}"的${count}道题。只输出JSON。`}],0.7);pb.style.width=`${att/MAX_RETRIES*60+20}%`;pd.textContent='校验...';const qs=robustParseJsonArray(resp);if(!qs.length)throw new Error('空数组');const vt=new Set(types);const vd=diff==='mixed'?new Set(['easy','medium','hard']):new Set([diff]);const valid=[];for(const q of qs){let qt=q.type||'choice',qd=q.difficulty||diff;if(qt==='single')qt='choice';if(qt==='multiple'||qt==='multi')qt='choice-multi';if(!vt.has(qt))continue;if(!vd.has(qd))qd=diff==='mixed'?['easy','medium','hard'][Math.floor(Math.random()*3)]:diff;valid.push({content:q.content||'（无）',type:qt,difficulty:qd,options:Array.isArray(q.options)?q.options:[],answer:String(q.answer||''),explanation:q.explanation||''});}if(!valid.length)throw new Error('AI未返回要求的题型');newQs=valid.slice(0,count).map((q,i)=>({id:'q_'+Date.now()+'_'+i,...q,topic,generatedAt:new Date().toISOString(),source:'ai_generate'}));break;}catch(e){lastErr=e;addLog('warn',`第${att}次: ${e.message}`);if(att<MAX_RETRIES)await delay(1000);}}
+  for(let att=1;att<=MAX_RETRIES;att++){try{pd.textContent=att>1?`重试${att}/${MAX_RETRIES}...`:'调用AI...';pb.style.width=`${(att-1)/MAX_RETRIES*60}%`;const resp=await callAI(apiId,[{role:'system',content:sp},{role:'user',content:`生成"${topic}"的${count}道题。只输出JSON。`}],0.7);pb.style.width=`${att/MAX_RETRIES*60+20}%`;pd.textContent='校验...';const qs=robustParseJsonArray(resp);if(!qs.length)throw new Error('空数组');const vt=new Set(types);const vd=diff==='mixed'?new Set(['easy','medium','hard']):new Set([diff]);const valid=[];for(const q of qs){let qt=q.type||'choice',qd=q.difficulty||diff;if(qt==='single')qt='choice';if(qt==='multiple'||qt==='multi')qt='choice-multi';if(!vt.has(qt))continue;if(!vd.has(qd))qd=diff==='mixed'?['easy','medium','hard'][Math.floor(Math.random()*3)]:diff;let opts=Array.isArray(q.options)?q.options:[];if(qt==='judge'&&opts.length===0)opts=['正确','错误'];valid.push({content:q.content||'（无）',type:qt,difficulty:qd,options:opts,answer:String(q.answer||''),explanation:q.explanation||''});}if(!valid.length)throw new Error('AI未返回要求的题型');newQs=valid.slice(0,count).map((q,i)=>({id:'q_'+Date.now()+'_'+i,...q,topic,generatedAt:new Date().toISOString(),source:'ai_generate'}));break;}catch(e){lastErr=e;addLog('warn',`第${att}次: ${e.message}`);if(att<MAX_RETRIES)await delay(1000);}}
   if(!newQs.length){pd.textContent=`失败: ${lastErr?.message||''}`;pb.style.width='100%';pb.style.background='var(--danger)';showToast('生成失败','error');btn.disabled=false;btn.innerHTML='✨ 开始生成';setTimeout(()=>{pb.style.background='';},5000);return;}
-  state.questions.push(...newQs);state.stats.totalGenerated+=newQs.length;pb.style.width='100%';pt.textContent=`${newQs.length}/${count}`;pd.textContent=`成功${newQs.length}道`+((newQs.length<count)?'（已过滤不符题型）':'');pv.innerHTML=newQs.map((q,i)=>`<div class="glass glass-card-sm q-card" onclick="showQDetail('${q.id}')"><div class="q-meta"><span class="tag tag-default">#${i+1}</span><span class="q-type ${q.type}">${TS[q.type]||q.type}</span><span class="tag tag-${q.difficulty==='hard'?'danger':q.difficulty==='medium'?'warn':'accent'}">${DL[q.difficulty]}</span></div><div class="q-content">${esc(q.content.slice(0,100))}</div></div>`).join('');addLog('success',`生成${newQs.length}道`);showToast(`生成${newQs.length}道`,'success');recordHistory('generate',newQs.length);saveState();btn.disabled=false;btn.innerHTML='✨ 开始生成';
+  state.questions.push(...newQs);state.stats.totalGenerated+=newQs.length;pb.style.width='100%';pt.textContent=`${newQs.length}/${count}`;pd.textContent=`成功${newQs.length}道`;pv.innerHTML=newQs.map((q,i)=>`<div class="glass glass-card-sm q-card" onclick="showQDetail('${q.id}')"><div class="q-meta"><span class="tag tag-default">#${i+1}</span><span class="q-type ${q.type}">${TS[q.type]||q.type}</span><span class="tag tag-${q.difficulty==='hard'?'danger':q.difficulty==='medium'?'warn':'accent'}">${DL[q.difficulty]}</span></div><div class="q-content">${esc(q.content.slice(0,100))}</div></div>`).join('');addLog('success',`生成${newQs.length}道`);showToast(`生成${newQs.length}道`,'success');recordHistory('generate',newQs.length);saveState();btn.disabled=false;btn.innerHTML='✨ 开始生成';
 }
+
+// UPLOAD
 function switchUploadTab(tab){document.querySelectorAll('#view-upload .tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));$('uploadSingle').style.display=tab==='single'?'':'none';$('uploadBatch').style.display=tab==='batch'?'':'none';}
-function addSingleQuestion(){const content=$('uploadSingleContent').value.trim();if(!content){showToast('输入题目','warning');return;}const answer=$('uploadSingleAnswer').value.trim();if(!answer){showToast('输入答案','warning');return;}state.questions.push({id:'q_up_'+Date.now(),content,type:$('uploadSingleType').value,difficulty:$('uploadSingleDiff').value,options:$('uploadSingleOptions').value.trim().split('\n').map(s=>s.trim()).filter(Boolean),answer,explanation:$('uploadSingleExplanation').value.trim(),topic:'手动'+($('uploadSingleTopic').value.trim()?' · '+$('uploadSingleTopic').value.trim():''),generatedAt:new Date().toISOString(),source:'manual'});state.stats.totalGenerated++;saveState();addLog('success','手动添加');showToast('已添加','success');['uploadSingleContent','uploadSingleAnswer','uploadSingleOptions','uploadSingleExplanation'].forEach(id=>$(id).value='');renderUploadRecent();}
+function addSingleQuestion(){const content=$('uploadSingleContent').value.trim();if(!content){showToast('输入题目','warning');return;}const answer=$('uploadSingleAnswer').value.trim();if(!answer){showToast('输入答案','warning');return;}const type=$('uploadSingleType').value;let options=[];if(type==='choice'||type==='choice-multi')options=$('uploadSingleOptions').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);else if(type==='judge')options=['正确','错误'];const explanation=$('uploadSingleExplanation').value.trim();const q={id:'q_up_'+Date.now(),content,type,difficulty:$('uploadSingleDiff').value,options,answer,explanation,topic:'手动'+($('uploadSingleTopic').value.trim()?' · '+$('uploadSingleTopic').value.trim():''),generatedAt:new Date().toISOString(),source:'manual'};state.questions.push(q);state.stats.totalGenerated++;saveState();addLog('success','手动添加');showToast('已添加','success');['uploadSingleContent','uploadSingleAnswer','uploadSingleOptions','uploadSingleExplanation'].forEach(id=>$(id).value='');renderUploadRecent();if(!explanation&&state.settings.autoExplain&&state.apiConfigs.length)generateExplanation(q);}
 async function addSingleAndAnswer(){addSingleQuestion();if(!state.apiConfigs.length){showToast('请先配置API','warning');return;}navigateTo('answer');$('ansScope').value='unanswered';await delay(300);startAnswering();}
 function handleBatchFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=(ev)=>{try{const d=JSON.parse(ev.target.result);$('uploadBatchText').value=JSON.stringify((Array.isArray(d)?d:[d]).filter(q=>q.content),null,2);showToast('解析成功','success');}catch(err){showToast('解析失败','error');}};r.readAsText(f);e.target.value='';}
 function parseBatchText(){const text=$('uploadBatchText').value.trim();if(!text)return[];try{const d=JSON.parse(text);return(Array.isArray(d)?d:[d]).filter(q=>q.content).map(q=>({content:q.content,type:q.type||'choice',difficulty:q.difficulty||'medium',options:Array.isArray(q.options)?q.options:[],answer:String(q.answer||''),explanation:q.explanation||'',topic:q.topic||''}));}catch(e){}return text.split('\n').map(s=>s.trim()).filter(Boolean).map(line=>({content:line,type:'choice',difficulty:'medium',options:[],answer:'',explanation:'',topic:'手动'}));}
-function addBatchQuestions(){const qs=parseBatchText();if(!qs.length){showToast('无题目','warning');return;}const now=Date.now();qs.forEach((q,i)=>state.questions.push({id:'q_bat_'+now+'_'+i,...q,generatedAt:new Date().toISOString(),source:'manual'}));state.stats.totalGenerated+=qs.length;saveState();addLog('success',`批量添加${qs.length}道`);showToast(`已添加${qs.length}道`,'success');renderUploadRecent();}
+function addBatchQuestions(){const qs=parseBatchText();if(!qs.length){showToast('无题目','warning');return;}const now=Date.now();const added=[];qs.forEach((q,i)=>{if(q.type==='judge'&&(!q.options||q.options.length===0))q.options=['正确','错误'];const full={id:'q_bat_'+now+'_'+i,...q,generatedAt:new Date().toISOString(),source:'manual'};state.questions.push(full);added.push(full);});state.stats.totalGenerated+=qs.length;saveState();addLog('success',`批量添加${qs.length}道`);showToast(`已添加${qs.length}道`,'success');renderUploadRecent();if(state.settings.autoExplain&&state.apiConfigs.length){added.filter(q=>!q.explanation).forEach(q=>generateExplanation(q));}}
 async function addBatchAndAnswer(){addBatchQuestions();if(!state.apiConfigs.length){showToast('请先配置API','warning');return;}navigateTo('answer');$('ansScope').value='unanswered';await delay(300);startAnswering();}
 function renderUploadRecent(){const c=$('uploadRecent'),manual=state.questions.filter(q=>q.source==='manual').slice(-15).reverse();if(!manual.length){c.innerHTML='<div class="empty-state"><div class="empty-icon">📤</div><div class="empty-text">暂无</div></div>';return;}c.innerHTML=manual.map(q=>`<div class="glass glass-card-sm" style="padding:12px"><div style="display:flex;gap:8px;margin-bottom:4px"><span class="q-type ${q.type}">${TS[q.type]||q.type}</span>${q.topic?`<span class="tag tag-default">${esc(q.topic)}</span>`:''}</div><div style="font-size:.84rem;color:var(--text-secondary)">${esc(q.content.slice(0,80))}</div></div>`).join('');}
-async function startAnswering(){const apiId=$('ansApi').value;if(!apiId){showToast('选择API','error');return;}const scope=$('ansScope').value,strategy=$('ansStrategy').value,temp=parseFloat($('ansTemp').value);const aids=new Set(state.answers.map(a=>a.questionId));let target;if(scope==='unanswered')target=state.questions.filter(q=>!aids.has(q.id));else if(scope==='recent'){const h=Date.now()-3600000;target=state.questions.filter(q=>new Date(q.generatedAt).getTime()>h);}else if(scope==='wrong-review'){const wids=new Set(state.wrongQuestions.map(w=>w.questionId));target=state.questions.filter(q=>wids.has(q.id));}else target=[...state.questions];if(!target.length){showToast('无待答题','warning');return;}const btn=$('ansBtn'),pc=$('ansProgressCard'),pb=$('ansProgressBar'),pt=$('ansProgressText'),cc=$('ansCorrectCount'),wc=$('ansWrongCount'),rd=$('ansResults');btn.disabled=true;btn.innerHTML='<div class="spinner"></div> 作答中...';pc.style.display='';pb.style.width='0%';rd.innerHTML='';let correct=0,wrong=0;const sp={direct:'直接作答。',cot:'先推理，最后标出答案。',careful:'审慎作答，用排除法。'};for(let i=0;i<target.length;i++){const q=target[i];pt.textContent=`${i+1}/${target.length}`;pb.style.width=`${((i+1)/target.length)*100}%`;try{let prompt=`作答：\n${sp[strategy]}\n\n题目：${q.content}\n${q.options?.length?'选项：\n'+q.options.join('\n'):''}\n\n`;if(q.type==='choice')prompt+='这是单选题，只给出一个字母（如A）。';else if(q.type==='choice-multi')prompt+='这是多选题，给出所有正确选项字母，逗号分隔（如A,B,D）。';else if(q.type==='judge')prompt+='判断题，回答"正确"或"错误"。';else prompt+='直接给出答案。';const ans=await callAI(apiId,[{role:'user',content:prompt}],temp);const ok=checkAnswer(q,ans);state.answers.push({id:'a_'+Date.now()+'_'+i,questionId:q.id,aiModel:state.apiConfigs.find(c=>c.id===apiId)?.model||'',answer:ans,isCorrect:ok,answeredAt:new Date().toISOString()});state.stats.totalAnswered++;if(ok){correct++;state.stats.totalCorrect++;}else{wrong++;state.stats.totalWrong++;addWrongQuestion(q,ans);}cc.textContent=`✓ ${correct}`;wc.textContent=`✗ ${wrong}`;rd.innerHTML+=`<div class="glass glass-card-sm" style="border-left:3px solid ${ok?'var(--accent)':'var(--danger)'}"><div style="display:flex;gap:8px;margin-bottom:4px"><span class="tag ${ok?'tag-accent':'tag-danger'}">${ok?'✓':'✗'}</span><span class="q-type ${q.type}">${TS[q.type]}</span></div><div style="font-size:.82rem;color:var(--text-secondary)">${esc(q.content.slice(0,60))}</div><div style="font-size:.75rem;color:var(--text-dim)">AI:${esc(ans.slice(0,40))} | 正确:${esc(q.answer)}</div></div>`;rd.scrollTop=rd.scrollHeight;if(i<target.length-1)await delay(state.settings.interval);}catch(e){addLog('error',`作答失败(${i+1})`);}}addLog('success',`完成 ${correct}对 ${wrong}错`);showToast(`完成 ${correct}对 ${wrong}错`,correct>=wrong?'success':'warning');recordHistory('answer',target.length);saveState();btn.disabled=false;btn.innerHTML='🤖 开始作答';refreshDashboard();}
-function checkAnswer(q,raw){const ca=q.answer.trim().toLowerCase(),ua=extractAnswer(q,raw).toLowerCase();if(state.settings.judgeMode==='exact')return ua===ca;if(state.settings.judgeMode==='contains')return ua.includes(ca)||ca.includes(ua);return ua===ca;}
+
+// ANSWERING
+async function startAnswering(){const apiId=$('ansApi').value;if(!apiId){showToast('选择API','error');return;}const scope=$('ansScope').value,strategy=$('ansStrategy').value,temp=parseFloat($('ansTemp').value);const aids=new Set(state.answers.map(a=>a.questionId));let target;if(scope==='unanswered')target=state.questions.filter(q=>!aids.has(q.id));else if(scope==='recent'){const h=Date.now()-3600000;target=state.questions.filter(q=>new Date(q.generatedAt).getTime()>h);}else if(scope==='wrong-review'){const wids=new Set(state.wrongQuestions.map(w=>w.questionId));target=state.questions.filter(q=>wids.has(q.id));}else target=[...state.questions];if(!target.length){showToast('无待答题','warning');return;}const btn=$('ansBtn'),pc=$('ansProgressCard'),pb=$('ansProgressBar'),pt=$('ansProgressText'),cc=$('ansCorrectCount'),wc=$('ansWrongCount'),rd=$('ansResults');btn.disabled=true;btn.innerHTML='<div class="spinner"></div> 作答中...';pc.style.display='';pb.style.width='0%';rd.innerHTML='';let correct=0,wrong=0;const sp={direct:'直接作答。',cot:'先推理，最后标出答案。',careful:'审慎作答，排除法。'};const ESCORE=`简答题评分(总分100,≥60正确)：要点覆盖40分+逻辑25分+准确性20分+完整性15分。先输出"得分:XX分|判定:正确/错误"。`;for(let i=0;i<target.length;i++){const q=target[i];pt.textContent=`${i+1}/${target.length}`;pb.style.width=`${((i+1)/target.length)*100}%`;try{let prompt=`作答：\n${sp[strategy]}\n\n题目：${q.content}\n${q.options?.length?'选项：\n'+q.options.join('\n'):''}\n\n`;if(q.type==='choice')prompt+='单选题，只给一个字母。';else if(q.type==='choice-multi')prompt+='多选题，所有正确选项字母，逗号分隔。';else if(q.type==='judge')prompt+='判断题，回答"正确"或"错误"。';else if(q.type==='essay')prompt+=`简答题。\n${ESCORE}\n参考答案：${q.answer}\n请评分。`;else prompt+='直接给出答案。';const ans=await callAI(apiId,[{role:'user',content:prompt}],temp);const ok=checkAnswer(q,ans);state.answers.push({id:'a_'+Date.now()+'_'+i,questionId:q.id,aiModel:state.apiConfigs.find(c=>c.id===apiId)?.model||'',answer:ans,isCorrect:ok,answeredAt:new Date().toISOString()});state.stats.totalAnswered++;if(ok){correct++;state.stats.totalCorrect++;}else{wrong++;state.stats.totalWrong++;addWrongQuestion(q,ans);}cc.textContent=`✓ ${correct}`;wc.textContent=`✗ ${wrong}`;rd.innerHTML+=`<div class="glass glass-card-sm ans-result-item" style="border-left:3px solid ${ok?'var(--accent)':'var(--danger)'}" onclick="showQDetail('${q.id}')"><div style="display:flex;gap:8px;margin-bottom:4px"><span class="tag ${ok?'tag-accent':'tag-danger'}">${ok?'✓':'✗'}</span><span class="q-type ${q.type}">${TS[q.type]}</span></div><div style="font-size:.82rem;color:var(--text-secondary)">${esc(q.content.slice(0,80))}</div><div style="font-size:.72rem;color:var(--text-dim);margin-top:4px">AI:${esc(ans.slice(0,40))} | 正确:${esc(q.answer.slice(0,20))}</div></div>`;rd.scrollTop=rd.scrollHeight;if(i<target.length-1)await delay(state.settings.interval);}catch(e){addLog('error',`作答失败(${i+1})`);}}addLog('success',`完成 ${correct}对 ${wrong}错`);showToast(`完成 ${correct}对 ${wrong}错`,correct>=wrong?'success':'warning');recordHistory('answer',target.length);saveState();btn.disabled=false;btn.innerHTML='🤖 开始作答';refreshDashboard();}
+function checkAnswer(q,raw){if(q.type==='essay'){const jm=raw.match(/判定[：:]\s*(正确|错误)/);if(jm)return jm[1]==='正确';const sm=raw.match(/得分[：:]\s*(\d+)/);if(sm)return parseInt(sm[1])>=60;const ca=q.answer.trim().toLowerCase();return raw.toLowerCase().includes(ca.slice(0,20));}const ca=q.answer.trim().toLowerCase(),ua=extractAnswer(q,raw).toLowerCase();if(state.settings.judgeMode==='exact')return ua===ca;if(state.settings.judgeMode==='contains')return ua.includes(ca)||ca.includes(ua);return ua===ca;}
 function extractAnswer(q,raw){if(q.type==='choice'){const m=raw.match(/[A-D]/i);return m?m[0].toUpperCase():raw.trim();}if(q.type==='choice-multi'){const ms=raw.match(/[A-D]/gi);return ms?[...new Set(ms.map(m=>m.toUpperCase()))].sort().join(','):raw.trim();}if(q.type==='judge'){if(/正确|对|√|true|是/i.test(raw))return'正确';if(/错误|错|×|false|否/i.test(raw))return'错误';return raw.trim();}const m=raw.match(/答案[：:]\s*(.+)/);if(m)return m[1].trim();return raw.trim();}
 function addWrongQuestion(q,ans){const ex=state.wrongQuestions.find(w=>w.questionId===q.id);if(ex){ex.count++;ex.lastWrongAnswer=ans;ex.lastWrongAt=new Date().toISOString();}else{state.wrongQuestions.push({id:'w_'+Date.now(),questionId:q.id,tags:[q.type,q.difficulty,q.topic||''].filter(Boolean),count:1,lastWrongAnswer:ans,lastWrongAt:new Date().toISOString(),createdAt:new Date().toISOString()});}$('wrongCount').textContent=state.wrongQuestions.length;}
+
+// WORKFLOW
 async function runWorkflow(){if(!state.apiConfigs.length){showToast('配置API','error');return;}workflowRunning=true;workflowAbort=false;$('wfBtn').style.display='none';$('wfStopBtn').style.display='';const mode=document.querySelector('input[name="wfMode"]:checked').value;const steps=['wfStep1','wfStep2','wfStep3','wfStep4'];const log=$('wfLog');log.innerHTML='';function wl(m,l='info'){log.innerHTML+=`<div class="log-entry"><span class="log-time">${new Date().toLocaleTimeString()}</span><span class="log-level ${l}">[${l}]</span><span class="log-msg">${esc(m)}</span></div>`;log.scrollTop=log.scrollHeight;}function ss(i,st){steps.forEach((s,j)=>{const e=$(s);e.classList.remove('active','done');if(j<i)e.classList.add('done');if(j===i)e.classList.add(st);});}function wcf(){return new Promise(r=>{const b=document.createElement('button');b.className='btn btn-primary btn-sm';b.style.margin='10px 0';b.textContent='✓ 确认继续';b.onclick=()=>{b.remove();r();};log.appendChild(b);});}try{ss(0,'active');wl('启动');if(mode==='manual')await wcf();ss(0,'done');ss(1,'active');wl('生成...');navigateTo('generate');await delay(300);await startGeneration();if(workflowAbort)throw new Error('已停止');ss(1,'done');wl('完成','success');if(mode==='manual')await wcf();ss(2,'active');wl('作答...');navigateTo('answer');$('ansScope').value='unanswered';await delay(300);await startAnswering();if(workflowAbort)throw new Error('已停止');ss(2,'done');wl('完成','success');if(mode==='manual')await wcf();ss(3,'active');wl('归档...');const a=state.stats.totalAnswered,c=state.stats.totalCorrect;wl(`作答:${a} 正确:${c} 率:${a>0?Math.round(c/a*100):0}%`);ss(3,'done');saveState();wl('全部完成！','success');showToast('完成！','success');}catch(e){wl('异常: '+e.message,'error');}finally{workflowRunning=false;$('wfBtn').style.display='';$('wfStopBtn').style.display='none';}}
 function stopWorkflow(){workflowAbort=true;showToast('停止中...','warning');}
+
+// TABLES
 function renderQuestions(){const s=($('qSearch')?.value||'').toLowerCase(),ft=$('qFilterType')?.value||'',fd=$('qFilterDiff')?.value||'';const f=state.questions.filter(q=>{if(s&&!q.content.toLowerCase().includes(s))return false;if(ft&&q.type!==ft)return false;if(fd&&q.difficulty!==fd)return false;return true;});const tb=$('questionsTable'),em=$('questionsEmpty');if(!f.length){tb.innerHTML='';em.style.display='';return;}em.style.display='none';const aids=new Set(state.answers.map(a=>a.questionId));tb.innerHTML=f.map((q,i)=>`<tr><td>${i+1}</td><td>${esc(q.content.slice(0,40))}</td><td><span class="q-type ${q.type}">${TS[q.type]||q.type}</span></td><td><span class="difficulty-${q.difficulty}">${DL[q.difficulty]||q.difficulty}</span></td><td>${q.source==='manual'?'<span class="tag tag-secondary">手动</span>':'<span class="tag tag-info">AI</span>'}</td><td>${aids.has(q.id)?'<span class="tag tag-accent">已答</span>':'<span class="tag tag-default">未答</span>'}</td><td><div style="display:flex;gap:4px"><button class="btn-icon" onclick="showQDetail('${q.id}')">👁️</button><button class="btn-icon" onclick="deleteQ('${q.id}')">🗑️</button></div></td></tr>`).join('');}
 function deleteQ(id){if(!confirm('删除？'))return;state.questions=state.questions.filter(q=>q.id!==id);state.answers=state.answers.filter(a=>a.questionId!==id);saveState();renderQuestions();showToast('已删除','info');}
 function showQDetail(id){const q=state.questions.find(x=>x.id===id);if(!q)return;const as=state.answers.filter(a=>a.questionId===id);let h=`<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"><span class="q-type ${q.type}">${TL[q.type]||q.type}</span><span class="difficulty-${q.difficulty}">${DL[q.difficulty]||q.difficulty}</span>${q.topic?`<span class="tag tag-default">${esc(q.topic)}</span>`:''}</div>`;h+=`<div style="font-size:.92rem;line-height:1.8;margin-bottom:14px;padding:14px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm)">${esc(q.content)}</div>`;if(q.options?.length)h+=`<div style="margin-bottom:14px">${q.options.map(o=>`<div style="padding:6px 12px;margin:4px 0;font-size:.84rem;color:var(--text-secondary);background:rgba(255,255,255,0.02);border-radius:var(--radius-xs)">${esc(o)}</div>`).join('')}</div>`;if(q.answer)h+=`<div style="padding:12px;background:var(--accent-dim);border-radius:var(--radius-xs);margin-bottom:14px"><div style="font-size:.72rem;font-weight:600;color:var(--accent);margin-bottom:4px">正确答案</div><div>${esc(q.answer)}</div></div>`;if(q.explanation)h+=`<div style="padding:12px;background:var(--info-dim);border-radius:var(--radius-xs);margin-bottom:14px"><div style="font-size:.72rem;font-weight:600;color:var(--info);margin-bottom:4px">解析</div><div style="font-size:.84rem;color:var(--text-secondary)">${esc(q.explanation)}</div></div>`;if(as.length){h+=`<div class="section-title" style="margin-top:14px">作答记录</div>`;as.forEach(a=>{h+=`<div style="padding:10px;margin:6px 0;border-left:3px solid ${a.isCorrect?'var(--accent)':'var(--danger)'};background:rgba(255,255,255,0.02);border-radius:0 var(--radius-xs) var(--radius-xs) 0"><div style="font-size:.75rem;color:var(--text-dim);margin-bottom:4px">${a.aiModel} · ${new Date(a.answeredAt).toLocaleString()}</div><div style="font-size:.84rem">${esc(a.answer.slice(0,200))}</div></div>`;});}$('qDetailContent').innerHTML=h;openModal('qDetailModal');}
@@ -740,8 +685,13 @@ function renderCharts(){const h=state.stats.history||[],labels=h.slice(-7).map(x
 function renderRecentActivity(){const c=$('recentActivity'),r=state.logs.slice(0,12);if(!r.length){c.innerHTML='<div style="text-align:center;color:var(--text-dim);padding:24px;font-size:.84rem">暂无</div>';return;}c.innerHTML=r.map(l=>`<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:.75rem"><span style="color:${l.level==='success'?'var(--accent)':l.level==='error'?'var(--danger)':'var(--text-dim)'};flex-shrink:0">${l.level==='success'?'✓':l.level==='error'?'✕':'ℹ'}</span><span style="color:var(--text-secondary);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.message.slice(0,45))}</span><span style="color:var(--text-dim);flex-shrink:0">${new Date(l.timestamp).toLocaleTimeString()}</span></div>`).join('');}
 function renderLogs(){const f=$('logFilter')?.value||'';const fl=f?state.logs.filter(l=>l.level===f):state.logs;const list=$('logList'),em=$('logEmpty');if(!fl.length){list.innerHTML='';em.style.display='';return;}em.style.display='none';list.innerHTML=fl.slice(0,200).map(l=>`<div class="log-entry"><span class="log-time">${new Date(l.timestamp).toLocaleTimeString()}</span><span class="log-level ${l.level}">${l.level}</span><span class="log-msg">${esc(l.message)}</span></div>`).join('');}
 function clearLogs(){if(!confirm('清空？'))return;state.logs=[];saveState();renderLogs();showToast('已清空','info');}
-function refreshSettings(){refreshApiSelects();$('settingGenApi').innerHTML='<option value="">未选择</option>'+state.apiConfigs.map(c=>`<option value="${c.id}" ${c.id===state.settings.genApiId?'selected':''}>${esc(c.name)}</option>`).join('');$('settingAnsApi').innerHTML='<option value="">未选择</option>'+state.apiConfigs.map(c=>`<option value="${c.id}" ${c.id===state.settings.ansApiId?'selected':''}>${esc(c.name)}</option>`).join('');$('settingInterval').value=state.settings.interval;$('settingMaxBatch').value=state.settings.maxBatch;$('settingAutoSave').value=state.settings.autoSave;$('settingJudgeMode').value=state.settings.judgeMode;$('settingJudgeTemp').value=state.settings.judgeTemp;$('settingJudgeTempVal').textContent=state.settings.judgeTemp;updatePinSettingsUI();}
+
+// SETTINGS
+function refreshSettings(){refreshApiSelects();$('settingGenApi').innerHTML='<option value="">未选择</option>'+state.apiConfigs.map(c=>`<option value="${c.id}" ${c.id===state.settings.genApiId?'selected':''}>${esc(c.name)}</option>`).join('');$('settingAnsApi').innerHTML='<option value="">未选择</option>'+state.apiConfigs.map(c=>`<option value="${c.id}" ${c.id===state.settings.ansApiId?'selected':''}>${esc(c.name)}</option>`).join('');$('settingInterval').value=state.settings.interval;$('settingMaxBatch').value=state.settings.maxBatch;$('settingAutoSave').value=state.settings.autoSave;$('settingJudgeMode').value=state.settings.judgeMode;$('settingJudgeTemp').value=state.settings.judgeTemp;$('settingJudgeTempVal').textContent=state.settings.judgeTemp;updatePinSettingsUI();$('autoExplainToggle').classList.toggle('on',state.settings.autoExplain);$('dcrPresetToggle').classList.toggle('on',state.settings.showDcrPresets);}
+$('autoExplainToggle').addEventListener('click',function(){this.classList.toggle('on');state.settings.autoExplain=this.classList.contains('on');saveState();showToast(this.classList.contains('on')?'自动解析已开启':'自动解析已关闭','info');});
+$('dcrPresetToggle').addEventListener('click',function(){this.classList.toggle('on');state.settings.showDcrPresets=this.classList.contains('on');saveState();showToast(this.classList.contains('on')?'DCR预设已显示':'DCR预设已隐藏','info');});
 function saveSettings(){state.settings.genApiId=$('settingGenApi')?.value||'';state.settings.ansApiId=$('settingAnsApi')?.value||'';state.settings.interval=parseInt($('settingInterval')?.value)||1000;state.settings.maxBatch=parseInt($('settingMaxBatch')?.value)||20;state.settings.autoSave=parseInt($('settingAutoSave')?.value)||30;state.settings.judgeMode=$('settingJudgeMode')?.value||'ai';state.settings.judgeTemp=parseFloat($('settingJudgeTemp')?.value)||0.1;saveState();showToast('已保存','success');}
+
 function exportAllData(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));a.download=`questflow_${new Date().toISOString().slice(0,10)}.json`;a.click();showToast('已导出','success');}
 function importAllData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=(ev)=>{try{const d=JSON.parse(ev.target.result);if(d.questions||d.apiConfigs){state={...JSON.parse(JSON.stringify(DEFAULT_STATE)),...d};saveState();showToast('导入成功','success');refreshDashboard();renderApiConfigs();}else showToast('无效文件','error');}catch(err){showToast('导入失败','error');}};r.readAsText(f);e.target.value='';}
 function exportQuestions(){if(!state.questions.length){showToast('无题目','warning');return;}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(state.questions,null,2)],{type:'application/json'}));a.download='questions.json';a.click();showToast('已导出','success');}
@@ -749,8 +699,9 @@ function exportWrongQuestions(){if(!state.wrongQuestions.length){showToast('无�
 function clearAllData(){if(!confirm('确定清空所有数据？不可恢复！'))return;if(!confirm('再次确认：全部清除。'))return;const pinOn=state.settings.pinEnabled,pin=state.settings.pinCode;state=JSON.parse(JSON.stringify(DEFAULT_STATE));if(pinOn){state.settings.pinEnabled=true;state.settings.pinCode=pin;}sessionStorage.removeItem('onboard_done');localStorage.setItem('questflow_state',JSON.stringify(state));showToast('已清空','info');addLog('info','全部清空');refreshDashboard();renderApiConfigs();location.reload();}
 $('settingJudgeTemp').addEventListener('input',function(){$('settingJudgeTempVal').textContent=this.value;});
 $('ansTemp').addEventListener('input',function(){$('ansTempVal').textContent=this.value;});
+
 function init(){loadState();if(checkPinOnLoad())return;afterUnlock();}
-function afterUnlock(){renderApiConfigs();refreshDashboard();$('wrongCount').textContent=state.wrongQuestions.length;addLog('info','系统启动');if(shouldShowOnboarding())showOnboarding();setInterval(saveState,(state.settings.autoSave||30)*1000);}
+function afterUnlock(){renderApiConfigs();refreshDashboard();$('wrongCount').textContent=state.wrongQuestions.length;addLog('info','系统启动');handleUploadTypeChange();if(shouldShowOnboarding())showOnboarding();setInterval(saveState,(state.settings.autoSave||30)*1000);}
 init();
 </script>
 </body>
